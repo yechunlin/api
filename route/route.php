@@ -9,8 +9,6 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-Route::get('User/:id', 'hsxz/user/getUser');
+Route::get('Class/getClass', 'hsxz/ClassServer/getClass');
+Route::post('Class/addClass', 'hsxz/ClassServer/addClass');
 
-return [
-
-];

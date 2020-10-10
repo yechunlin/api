@@ -32,7 +32,7 @@ CREATE TABLE `class` (
   `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `dated` datetime NOT NULL,
-  `status` tinyint(4) NOT NULL
+  `status` tinyint(4) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='班级表';
 
 -- --------------------------------------------------------
@@ -46,7 +46,7 @@ CREATE TABLE `course` (
   `introduction` varchar(100) NOT NULL,
   `video_id` int(11) NOT NULL,
   `teacher_id` int(11) NOT NULL,
-  `status` tinyint(4) NOT NULL
+  `status` tinyint(4) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课程内容标';
 
 -- --------------------------------------------------------
@@ -61,7 +61,7 @@ CREATE TABLE `school_timetable` (
   `class_id` int(11) NOT NULL,
   `teacher_id` int(11) NOT NULL,
   `recom` tinyint(4) NOT NULL,
-  `status` tinyint(4) NOT NULL
+  `status` tinyint(4) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课程表';
 
 -- --------------------------------------------------------
@@ -77,7 +77,7 @@ CREATE TABLE `video` (
   `duration` int(11) NOT NULL,
   `cover` varchar(255) NOT NULL,
   `dated` datetime NOT NULL,
-  `status` tinyint(4) NOT NULL
+  `status` tinyint(4) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='视频表';
 
 --
