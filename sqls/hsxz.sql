@@ -31,8 +31,10 @@ SET time_zone = "+00:00";
 CREATE TABLE `class` (
   `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `author` varchar(20) NOT NULL,
   `dated` datetime NOT NULL,
-  `status` tinyint(4) NOT NULL DEFAULT '1'
+  `status` tinyint(4) NOT NULL DEFAULT '1',
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='班级表';
 
 -- --------------------------------------------------------

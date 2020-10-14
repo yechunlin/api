@@ -23,7 +23,7 @@ class ClassServer extends Controller
 		$id = Request::get('id');
 		$res = $this->class_model->getClassInfo(['id' => $id]);
 		return json([
-			'status' => 1,
+			'code' => 20000,
 			'data' => $res
 		]);
 	}
@@ -38,9 +38,10 @@ class ClassServer extends Controller
 		$res = $this->class_model->addClass($p, true);
 		if($res)
 		{
-			return json([
-				'status' => 1,
-				'data' => $res
+		    $p['id'] = $res;
+ 			return json([
+				'code' => 20000,
+				'data' => $p
 			]);
 		}
 	}
@@ -51,17 +52,111 @@ class ClassServer extends Controller
     public function getClass()
     {
         $status = Request::get('status', 1);
+        $sort = Request::get('sort', 1);
         $page = Request::get('page', 1);
         $limit = Request::get('limit', 10);
         $where = ['status' => $status];
         $count = $this->class_model->getCount($where);
-        $list = $this->class_model->getClass($where, $page, $limit);
+        $list = $this->class_model->getClass($where, $page, $limit, $sort);
         return json([
-            'status' => 1,
+            'code' => 20000,
             'data' => [
-                'count' => $count,
+                'total' => $count,
                 'items' => $list
             ]
+        ]);
+    }
+
+    /**
+     * 搜索班级
+     */
+    public function searchClass()
+    {
+        $id = Request::get('id');
+        $name = Request::get('name');
+        $status = Request::get('status', 1);
+        $sort = Request::get('sort', 1);
+        $page = Request::get('page', 1);
+        $limit = Request::get('limit', 10);
+        $where = ['status' => $status];
+        if($id)
+        {
+            $where['id'] = $id;
+        }
+        if($name)
+        {
+            $likeWhere['name'] = "%{$name}%";
+            $count = $this->class_model->getLikeCount($where, $likeWhere);
+            $list = $this->class_model->getLikeClass($where, $likeWhere, $page, $limit, $sort);
+            return json([
+                'code' => 20000,
+                'data' => [
+                    'total' => $count,
+                    'items' => $list
+                ]
+            ]);
+        }
+        $count = $this->class_model->getCount($where);
+        $list = $this->class_model->getClass($where, $page, $limit, $sort);
+        return json([
+            'code' => 20000,
+            'data' => [
+                'total' => $count,
+                'items' => $list
+            ]
+        ]);
+    }
+
+    /**
+     * 修改班级信息
+     */
+    public function updateClass()
+    {
+        $p = Request::post();
+        $where = [
+            'id' => $p['id']
+        ];
+        $data = [
+            'name' => $p['name'],
+            'description' => $p['description']
+        ];
+        $res = $this->class_model->updateClass($where, $data);
+        if($res)
+        {
+            return json([
+                'code' => 20000,
+                'data' => $p
+            ]);
+        }
+        return json([
+            'code' => 0,
+            'data' => []
+        ]);
+    }
+
+    /**
+     * 删除班级信息
+     */
+    public function deleteClass()
+    {
+        $p = Request::post();
+        $where = [
+            'id' => $p['id']
+        ];
+        $data = [
+            'status' => 0,
+        ];
+        $res = $this->class_model->updateClass($where, $data);
+        if($res)
+        {
+            return json([
+                'code' => 20000,
+                'data' => $p
+            ]);
+        }
+        return json([
+            'code' => 0,
+            'data' => []
         ]);
     }
 }

@@ -16,11 +16,12 @@ class ClassModel extends Model
 		return $res;
 	}
 
-	public function getClass($where=[], $page=1, $limit=10)
+	public function getClass($where=[], $page=1, $limit=10, $sort=1)
 	{
+	    $order = !intval($sort) ? 'asc' : 'desc';
 		$res = ClassModel::where($where)
 			->field('*')
-			->order('id', 'desc')
+			->order('id', $order)
 			->page($page, $limit)
 			->select();
 		return $res;
@@ -40,5 +41,30 @@ class ClassModel extends Model
 		}
 		return $res;
 	}
+
+	public function updateClass($where=[], $data=[])
+    {
+        return ClassModel::where($where)->update($data);
+    }
+
+
+    public function getLikeClass($where=[], $likeWhere=[], $page=1, $limit=10, $sort=1)
+    {
+        $order = !intval($sort) ? 'asc' : 'desc';
+        $res = ClassModel::where($where)
+            ->whereLike($likeWhere)
+            ->field('*')
+            ->order('id', $order)
+            ->page($page, $limit)
+            ->select();
+        return $res;
+    }
+
+    public function getLikeCount($where=[], $likeWhere=[])
+    {
+        return ClassModel::where($where)
+            ->whereLike($likeWhere)
+            ->count('id');
+    }
 
 }
