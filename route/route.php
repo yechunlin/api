@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
+Route::get('Class/getClassInfo', 'hsxz/ClassServer/getClassInfo');
 Route::get('Class/getClass', 'hsxz/ClassServer/getClass');
 Route::post('Class/addClass', 'hsxz/ClassServer/addClass');
 

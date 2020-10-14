@@ -8,7 +8,7 @@ class ClassModel extends Model
 
 	protected $table = 'class';
 
-	public function getClass($where=[], $fields='*')
+	public function getClassInfo($where=[], $fields='*')
 	{
 		$res = ClassModel::where($where)
 			->field($fields)
@@ -16,15 +16,20 @@ class ClassModel extends Model
 		return $res;
 	}
 
-	public function getClassByPage($where=[], $fields='*', $page=1, $limit=10)
+	public function getClass($where=[], $page=1, $limit=10)
 	{
 		$res = ClassModel::where($where)
-			->field($fields)
+			->field('*')
 			->order('id', 'desc')
 			->page($page, $limit)
 			->select();
 		return $res;
 	}
+
+	public function getCount($where=[])
+    {
+        return ClassModel::where($where)->count('id');
+    }
 
 	public function addClass($params=[], $incId = false)
 	{
