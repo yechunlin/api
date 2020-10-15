@@ -3,23 +3,23 @@ namespace app\hsxz\model;
 
 use think\Model;
 
-class ClassModel extends Model
+class CourseModel extends Model
 {
 
-	protected $table = 'class';
+	protected $table = 'course';
 
-	public function getClassInfo($where=[], $fields='*')
+	public function getCourseInfo($where=[], $fields='*')
 	{
-		$res = ClassModel::where($where)
+		$res = CourseModel::where($where)
 			->field($fields)
 			->findOrEmpty();
 		return $res;
 	}
 
-	public function getClass($where=[], $page=1, $limit=10, $sort=1)
+	public function getCourse($where=[], $page=1, $limit=10, $sort=1)
 	{
 	    $order = !intval($sort) ? 'asc' : 'desc';
-		$res = ClassModel::where($where)
+		$res = CourseModel::where($where)
 			->field('*')
 			->order('id', $order)
 			->page($page, $limit)
@@ -29,29 +29,29 @@ class ClassModel extends Model
 
 	public function getCount($where=[])
     {
-        return ClassModel::where($where)->count('id');
+        return CourseModel::where($where)->count('id');
     }
 
-	public function addClass($params=[], $incId = false)
+	public function addCourse($params=[], $incId = false)
 	{
-		$res = ClassModel::insert($params);
+		$res = CourseModel::insert($params);
 		if($incId)
 		{
-			return ClassModel::getLastInsID();
+			return CourseModel::getLastInsID();
 		}
 		return $res;
 	}
 
-	public function updateClass($where=[], $data=[])
+	public function updateCourse($where=[], $data=[])
     {
-        return ClassModel::where($where)->update($data);
+        return CourseModel::where($where)->update($data);
     }
 
 
-    public function getLikeClass($where=[], $likeWhere=[], $page=1, $limit=10, $sort=1)
+    public function getLikeCourse($where=[], $likeWhere=[], $page=1, $limit=10, $sort=1)
     {
         $order = !intval($sort) ? 'asc' : 'desc';
-        $res = ClassModel::where($where)->where(function ($query) use ($likeWhere){
+        $res = CourseModel::where($where)->where(function ($query) use ($likeWhere){
 				foreach($likeWhere as $val)
 				{
 					$query->whereLike($val['field'], "%{$val['value']}%");
@@ -65,7 +65,7 @@ class ClassModel extends Model
 
     public function getLikeCount($where=[], $likeWhere=[])
     {
-        $res = ClassModel::where($where)->where(function($query) use ($likeWhere){
+        $res = CourseModel::where($where)->where(function($query) use ($likeWhere){
 				foreach($likeWhere as $val)
 				{
 					$query->whereLike($val['field'], "%{$val['value']}%");

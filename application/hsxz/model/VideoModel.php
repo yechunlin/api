@@ -3,23 +3,23 @@ namespace app\hsxz\model;
 
 use think\Model;
 
-class ClassModel extends Model
+class VideoModel extends Model
 {
 
-	protected $table = 'class';
+	protected $table = 'video';
 
-	public function getClassInfo($where=[], $fields='*')
+	public function getVideoInfo($where=[], $fields='*')
 	{
-		$res = ClassModel::where($where)
+		$res = VideoModel::where($where)
 			->field($fields)
 			->findOrEmpty();
 		return $res;
 	}
 
-	public function getClass($where=[], $page=1, $limit=10, $sort=1)
+	public function getVideo($where=[], $page=1, $limit=10, $sort=1)
 	{
 	    $order = !intval($sort) ? 'asc' : 'desc';
-		$res = ClassModel::where($where)
+		$res = VideoModel::where($where)
 			->field('*')
 			->order('id', $order)
 			->page($page, $limit)
@@ -29,29 +29,29 @@ class ClassModel extends Model
 
 	public function getCount($where=[])
     {
-        return ClassModel::where($where)->count('id');
+        return VideoModel::where($where)->count('id');
     }
 
-	public function addClass($params=[], $incId = false)
+	public function addVideo($params=[], $incId = false)
 	{
-		$res = ClassModel::insert($params);
+		$res = VideoModel::insert($params);
 		if($incId)
 		{
-			return ClassModel::getLastInsID();
+			return VideoModel::getLastInsID();
 		}
 		return $res;
 	}
 
-	public function updateClass($where=[], $data=[])
+	public function updateVideo($where=[], $data=[])
     {
-        return ClassModel::where($where)->update($data);
+        return VideoModel::where($where)->update($data);
     }
 
 
-    public function getLikeClass($where=[], $likeWhere=[], $page=1, $limit=10, $sort=1)
+    public function getLikeVideo($where=[], $likeWhere=[], $page=1, $limit=10, $sort=1)
     {
         $order = !intval($sort) ? 'asc' : 'desc';
-        $res = ClassModel::where($where)->where(function ($query) use ($likeWhere){
+        $res = VideoModel::where($where)->where(function ($query) use ($likeWhere){
 				foreach($likeWhere as $val)
 				{
 					$query->whereLike($val['field'], "%{$val['value']}%");
@@ -65,7 +65,7 @@ class ClassModel extends Model
 
     public function getLikeCount($where=[], $likeWhere=[])
     {
-        $res = ClassModel::where($where)->where(function($query) use ($likeWhere){
+        $res = VideoModel::where($where)->where(function($query) use ($likeWhere){
 				foreach($likeWhere as $val)
 				{
 					$query->whereLike($val['field'], "%{$val['value']}%");

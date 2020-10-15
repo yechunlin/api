@@ -3,25 +3,25 @@ namespace app\hsxz\controller;
 
 use think\Controller;
 use think\facade\Request;
-use app\hsxz\model\ClassModel;
+use app\hsxz\model\CourseModel;
 
-class ClassServer extends Controller
+class Course extends Controller
 {
-	private $Class_model;
+	private $Course_model;
 	public function __construct()
 	{
-		$this->Class_model = new ClassModel();
+		$this->Course_model = new CourseModel();
 	}
 
     /**
-     * 根据ID获取班级详情
+     * 根据ID获取课程详情
      * @param id int
      * @return \think\response\Json
      */
-	public function getClassInfo()
+	public function getCourseInfo()
 	{
 		$id = Request::get('id');
-		$res = $this->Class_model->getClassInfo(['id' => $id]);
+		$res = $this->Course_model->getCourseInfo(['id' => $id]);
 		return json([
 			'code' => 20000,
 			'data' => $res
@@ -29,13 +29,12 @@ class ClassServer extends Controller
 	}
 
     /**
-     * 添加班级
+     * 添加课程
      */
-	public function addClass()
+	public function addCourse()
 	{
 		$p = Request::post();
-		$p['dated'] = date('Y-m-d H:i:s');
-		$res = $this->Class_model->addClass($p, true);
+		$res = $this->Course_model->addCourse($p, true);
 		if($res)
 		{
 		    $p['id'] = $res;
@@ -47,17 +46,17 @@ class ClassServer extends Controller
 	}
 
     /**
-     * 获取班级列表
+     * 获取课程列表
      */
-    public function getClass()
+    public function getCourse()
     {
         $status = Request::get('status', 1);
         $sort = Request::get('sort', 1);
         $page = Request::get('page', 1);
         $limit = Request::get('limit', 10);
         $where = ['status' => $status];
-        $count = $this->Class_model->getCount($where);
-        $list = $this->Class_model->getClass($where, $page, $limit, $sort);
+        $count = $this->Course_model->getCount($where);
+        $list = $this->Course_model->getCourse($where, $page, $limit, $sort);
         return json([
             'code' => 20000,
             'data' => [
@@ -68,12 +67,12 @@ class ClassServer extends Controller
     }
 
     /**
-     * 搜索班级
+     * 搜索课程
      */
-    public function searchClass()
+    public function searchCourse()
     {
         $id = Request::get('id');
-        $name = Request::get('name');
+        $title = Request::get('title');
         $status = Request::get('status', 1);
         $sort = Request::get('sort', 1);
         $page = Request::get('page', 1);
@@ -83,16 +82,16 @@ class ClassServer extends Controller
         {
             $where['id'] = $id;
         }
-        if($name)
+        if($title)
         {
             $likeWhere = [
-				['field' => 'name', 'value' => $name]
+				['field' => 'title', 'value' => $title]
 			];
-            $count = $this->Class_model->getLikeCount($where, $likeWhere);
-            $list  = $this->Class_model->getLikeClass($where, $likeWhere, $page, $limit, $sort);
+            $count = $this->Course_model->getLikeCount($where, $likeWhere);
+            $list  = $this->Course_model->getLikeCourse($where, $likeWhere, $page, $limit, $sort);
         }else{
-		    $count = $this->Class_model->getCount($where);
-			$list  = $this->Class_model->getClass($where, $page, $limit, $sort);
+		    $count = $this->Course_model->getCount($where);
+			$list  = $this->Course_model->getCourse($where, $page, $limit, $sort);
 		}
 
         return json([
@@ -105,19 +104,22 @@ class ClassServer extends Controller
     }
 
     /**
-     * 修改班级信息
+     * 修改课程信息
      */
-    public function updateClass()
+    public function updateCourse()
     {
         $p = Request::post();
         $where = [
             'id' => $p['id']
         ];
         $data = [
-            'name' => $p['name'],
-            'description' => $p['description']
+            'title' => $p['title'],
+            'cover' => $p['cover'],
+			'class_id' => $p['class_id'],
+			'video_id' => $p['video_id'],
+			'teacher_id' => $p['teacher_id']
         ];
-        $res = $this->Class_model->updateClass($where, $data);
+        $res = $this->Course_model->updateCourse($where, $data);
         if($res)
         {
             return json([
@@ -132,9 +134,9 @@ class ClassServer extends Controller
     }
 
     /**
-     * 删除班级信息
+     * 删除课程信息
      */
-    public function deleteClass()
+    public function deleteCourse()
     {
         $p = Request::post();
         $where = [
@@ -143,7 +145,7 @@ class ClassServer extends Controller
         $data = [
             'status' => 0,
         ];
-        $res = $this->Class_model->updateClass($where, $data);
+        $res = $this->Course_model->updateCourse($where, $data);
         if($res)
         {
             return json([
