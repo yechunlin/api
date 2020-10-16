@@ -3,8 +3,7 @@ namespace app\admin\controller;
 
 use think\Controller;
 use think\facade\Request;
-use app\hsxz\model\UserModel;
-use app\extend\Edcrypt;
+use app\admin\model\UserModel;
 
 class User extends Controller
 {
@@ -17,16 +16,15 @@ class User extends Controller
 	public function login()
 	{
 		$username = Request::post('username');
-        $password = md5(Request::post('password'));
+        $password = Request::post('password');
 		$where = [
 			'nickname' => $username,
-			'password' => $password
+			'password' => md5($password)
 		];
 		$user = $this->User_model->getUserInfo($where);
 		if($user)
 		{	
-			$edcrypt = new Edcrypt();
-			$access_token = $edcrypt->encrypt(rand(1000, 9999).time().$password);
+			$access_token = md5($username.$password);
 			$res = $this->User_model->updateUser(['id' => $user['id']], [
 				'lastdated' => date('Y-m-d H:i:s'),
 				'access_token' => $access_token

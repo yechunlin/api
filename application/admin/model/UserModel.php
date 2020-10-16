@@ -1,5 +1,5 @@
 <?php
-namespace app\hsxz\model;
+namespace app\admin\model;
 
 use think\Model;
 
@@ -8,10 +8,6 @@ class UserModel extends Model
 
 	protected $table = 'user';
 
-	public function __construct()
-	{
-
-	}
 	public function addUser($params=[], $incId = false)
 	{
 		$res = UserModel::insert($params);
@@ -20,7 +16,8 @@ class UserModel extends Model
 
 	public function getUserInfo($where=[])
 	{
-		return UserModel::where($where)->limit(1)->select();
+		$res = UserModel::where($where)->limit(1)->select();
+		return $res[0];
 	}
 
 	public function updateUser($where=[], $data=[])
