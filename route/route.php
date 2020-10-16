@@ -16,7 +16,6 @@ Route::group('Class', function () {
     Route::post('addClass', 'hsxz/ClassServer/addClass');
     Route::post('updateClass', 'hsxz/ClassServer/updateClass');
     Route::post('deleteClass', 'hsxz/ClassServer/deleteClass');
-	Route::get('searchClass', 'hsxz/ClassServer/searchClass');
 });
 //课程
 Route::group('Course', function () {
@@ -25,7 +24,6 @@ Route::group('Course', function () {
     Route::post('addCourse', 'hsxz/Course/addCourse');
     Route::post('updateCourse', 'hsxz/Course/updateCourse');
     Route::post('deleteCourse', 'hsxz/Course/deleteCourse');
-	Route::get('searchCourse', 'hsxz/Course/searchCourse');
 });
 
 Route::group('admin/user', function () {

@@ -50,27 +50,6 @@ class Course extends Controller
      */
     public function getCourse()
     {
-        $status = Request::get('status', 1);
-        $sort = Request::get('sort', 1);
-        $page = Request::get('page', 1);
-        $limit = Request::get('limit', 10);
-        $where = ['status' => $status];
-        $count = $this->Course_model->getCount($where);
-        $list = $this->Course_model->getCourse($where, $page, $limit, $sort);
-        return json([
-            'code' => 20000,
-            'data' => [
-                'total' => $count,
-                'items' => $list
-            ]
-        ]);
-    }
-
-    /**
-     * 搜索课程
-     */
-    public function searchCourse()
-    {
         $id = Request::get('id');
         $title = Request::get('title');
         $status = Request::get('status', 1);
@@ -117,7 +96,8 @@ class Course extends Controller
             'cover' => $p['cover'],
 			'class_id' => $p['class_id'],
 			'video_id' => $p['video_id'],
-			'teacher_id' => $p['teacher_id']
+			'teacher_id' => $p['teacher_id'],
+			'admin_id' => $p['admin_id']
         ];
         $res = $this->Course_model->updateCourse($where, $data);
         if($res)

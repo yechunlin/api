@@ -4,27 +4,48 @@ namespace app\admin\controller;
 use think\Controller;
 use think\facade\Request;
 use app\hsxz\model\UserModel;
+use app\extend\Edcrypt;
 
 class User extends Controller
 {
-	private $user_model;
+	private $User_model;
 	public function __construct()
 	{
-		$this->user_model = new UserModel();
+		$this->User_model = new UserModel();
 	}
 
 	public function login()
 	{
 		$username = Request::post('username');
         $password = md5(Request::post('password'));
-		if($username === 'admin' && $password == md5('123456'))
-		{
-		    return json([
-                'code' => 20000,
-		        'data' => [
-		            'token' => md5('admin123456')
-                ]
-            ]);
+		$where = [
+			'nickname' => $username,
+			'password' => $password
+		];
+		$user = $this->User_model->getUserInfo($where);
+		if($user)
+		{	
+			$edcrypt = new Edcrypt();
+			$access_token = $edcrypt->encrypt(rand(1000, 9999).time().$password);
+			$res = $this->User_model->updateUser(['id' => $user['id']], [
+				'lastdated' => date('Y-m-d H:i:s'),
+				'access_token' => $access_token
+			]);
+			if($res)
+			{
+				return json([
+					'code' => 20000,
+					'data' => [
+						'token' => $access_token
+					]
+				]);
+			}else
+			{
+			    return json([
+					'code' => 60204,
+					'data' => []
+				]);
+			}
         }
         return json([
             'code' => 60204,

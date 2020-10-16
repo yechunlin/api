@@ -51,27 +51,6 @@ class ClassServer extends Controller
      */
     public function getClass()
     {
-        $status = Request::get('status', 1);
-        $sort = Request::get('sort', 1);
-        $page = Request::get('page', 1);
-        $limit = Request::get('limit', 10);
-        $where = ['status' => $status];
-        $count = $this->Class_model->getCount($where);
-        $list = $this->Class_model->getClass($where, $page, $limit, $sort);
-        return json([
-            'code' => 20000,
-            'data' => [
-                'total' => $count,
-                'items' => $list
-            ]
-        ]);
-    }
-
-    /**
-     * 搜索班级
-     */
-    public function searchClass()
-    {
         $id = Request::get('id');
         $name = Request::get('name');
         $status = Request::get('status', 1);
@@ -103,6 +82,7 @@ class ClassServer extends Controller
             ]
         ]);
     }
+
 
     /**
      * 修改班级信息
