@@ -3,6 +3,8 @@ namespace app\hsxz\controller;
 
 use think\Controller;
 use think\facade\Request;
+use app\hsxz\model\ClassModel;
+use app\hsxz\model\UserModel;
 use app\hsxz\model\CourseModel;
 
 class Course extends Controller
@@ -72,7 +74,16 @@ class Course extends Controller
 		    $count = $this->Course_model->getCount($where);
 			$list  = $this->Course_model->getCourse($where, $page, $limit, $sort);
 		}
-
+		$classModel = new ClassModel();
+		$userModel = new UserModel();
+		foreach($list as $key => &$val){
+			$tmp = $classModel->getClassInfo(['id' => $val['class_id']]);
+			$val['class_name'] = $tmp['name'];
+			$tmp = $userModel->getUserInfo(['id' => $val['teacher_id']]);
+			$val['teacher_name'] = $tmp['username'];
+			$tmp = $userModel->getUserInfo(['id' => $val['admin_id']]);
+			$val['admin_name'] = $tmp['username'];
+		}
         return json([
             'code' => 20000,
             'data' => [

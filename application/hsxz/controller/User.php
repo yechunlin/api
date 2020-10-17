@@ -7,22 +7,26 @@ use app\hsxz\model\UserModel;
 
 class User extends Controller
 {
-	private $user_model;
+	private $User_model;
 	public function __construct()
 	{
-		$this->user_model = new UserModel();
+		$this->User_model = new UserModel();
 	}
 
-	public function getUser()
+	public function getUserInfo()
 	{
 		$id = Request::get('id');
-		 return json(['status' => $id]);
+		$res = $this->User_model->getUserInfo(['id' => $id]);
+		return json([
+			'code' => 20000,
+			'data' => $res
+		]);
 	}
 
 	public function addUser()
 	{
 		$p = Request::post();
-		$res = $this->user_model->addUser($p, true);
+		$res = $this->User_model->addUser($p, true);
 		if($res)
 		{
 			return json(['status' => $res]);

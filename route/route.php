@@ -30,3 +30,6 @@ Route::group('admin/user', function () {
     Route::post('login', 'admin/User/login');
     Route::get('info', 'admin/User/info');
 });
+
+//upload
+Route::post('Upload/execAction', 'hsxz/Upload/execAction');

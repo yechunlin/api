@@ -18,7 +18,7 @@ class User extends Controller
 		$username = Request::post('username');
         $password = Request::post('password');
 		$where = [
-			'nickname' => $username,
+			'username' => $username,
 			'password' => md5($password)
 		];
 		$user = $this->User_model->getUserInfo($where);
