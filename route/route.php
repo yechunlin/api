@@ -33,3 +33,7 @@ Route::group('admin/user', function () {
 
 //upload
 Route::post('Upload/execAction', 'hsxz/Upload/execAction');
+
+Route::group('index', function(){
+    Route::get('index', 'index/index/hello');
+})->model('\app\hsxz\model\UserModel');
