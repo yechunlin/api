@@ -15,11 +15,13 @@ class User extends Controller
 
 	public function login()
 	{
+
 		$username = Request::post('username');
         $password = Request::post('password');
 		$where = [
 			'username' => $username,
-			'password' => md5($password)
+			'password' => md5($password),
+            'status' => 1
 		];
 		$user = $this->User_model->getUserInfo($where);
 		if($user)

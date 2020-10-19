@@ -16,8 +16,7 @@ class UserModel extends Model
 
 	public function getUserInfo($where=[])
 	{
-		$res = UserModel::where($where)->limit(1)->select();
-		return $res[0];
+        return UserModel::where($where)->find();
 	}
 
 	public function updateUser($where=[], $data=[])
