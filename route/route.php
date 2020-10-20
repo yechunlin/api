@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
+Route::miss('output/Output/notFound');
 
 //班级
 Route::group('Class', function () {
@@ -36,4 +37,5 @@ Route::post('Upload/execAction', 'hsxz/Upload/execAction');
 
 Route::group('index', function(){
     Route::get('index', 'index/index/hello');
+    Route::get('showError', 'index/index/showError');
 })->model('\app\hsxz\model\UserModel');

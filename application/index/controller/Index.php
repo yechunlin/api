@@ -4,8 +4,9 @@ namespace app\index\controller;
 use app\hsxz\model\UserModel;
 use myextend\Edcrypt;
 use think\facade\Hook;
+use app\common\controller\MyController;
 
-class Index
+class Index extends MyController
 {
     public function index()
     {
@@ -17,6 +18,13 @@ class Index
         Hook::listen('test');
         Hook::add('test', 'app\\index\\behavior\\Test');
         $res = $userModel->getUserInfo(['id' => 1]);
-        //return json($res);
+        return json($res);
+    }
+
+    public function showError(UserModel $userModel)
+    {   
+        return $this->_error(500, '服务挂机');
+        //return $this->_success();
+        //exception('not', 404);
     }
 }
