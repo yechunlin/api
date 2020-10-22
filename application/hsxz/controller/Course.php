@@ -28,14 +28,14 @@ class Course extends MyController
             'id|课程ID'  => 'require|integer'
         ]);
         if(!$validate->check($params)) {
-            return $this->_error(4000, 400, $validate->getError());
+            return $this->validateError($validate->getError());
         }
 		$res = $this->Course_model->getCourseInfo(['id' => $params['id']]);
         if($res)
         {
             return $this->_success($res);
         }
-        return $this->_error(4001, 404);
+        return $this->notFoundError();
 	}
 
     /**
@@ -65,13 +65,10 @@ class Course extends MyController
 		$res = $this->Course_model->addCourse($params, true);
 		if($res)
 		{
-		    $p['id'] = $res;
- 			return json([
-				'code' => 20000,
-				'data' => $p
-			]);
+		    $params['id'] = $res;
+ 			return return $this->_success($params);;
 		}
-		$this->_error();
+		return $this->serviceError();
 	}
 
     /**
@@ -79,21 +76,34 @@ class Course extends MyController
      */
     public function getCourse()
     {
-        $id = Request::get('id');
-        $title = Request::get('title');
-        $status = Request::get('status', 1);
-        $sort = Request::get('sort', 1);
-        $page = Request::get('page', 1);
-        $limit = Request::get('limit', 10);
-        $where = ['status' => $status];
+        $params = Request::only([
+            'id' => 0,
+            'title' => '',
+            'status' => 1,
+            'sort' => 1,
+            'page' => 1,
+            'limit' => 20
+        ], 'get');
+        $validate   = Validate::make([
+            'id|课程ID'  => 'integer',
+            'title|标题'  => 'max:20',
+            'status'  => 'integer',
+            'sort'  => 'integer',
+            'page'  => 'integer',
+            'limit'  => 'integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
+        $where = ['status' => $params['status']];
         if($id)
         {
-            $where['id'] = $id;
+            $where['id'] = $params['id'];
         }
         if($title)
         {
             $likeWhere = [
-				['field' => 'title', 'value' => $title]
+				['field' => 'title', 'value' => $params['title']]
 			];
             $count = $this->Course_model->getLikeCount($where, $likeWhere);
             $list  = $this->Course_model->getLikeCourse($where, $likeWhere, $page, $limit, $sort);
@@ -111,12 +121,9 @@ class Course extends MyController
 			$tmp = $userModel->getUserInfo(['id' => $val['admin_id']]);
 			$val['admin_name'] = $tmp['username'];
 		}
-        return json([
-            'code' => 20000,
-            'data' => [
-                'total' => $count,
-                'items' => $list
-            ]
+        return $this->_success([
+            'total' => $count,
+            'items' => $list
         ]);
     }
 
@@ -125,30 +132,36 @@ class Course extends MyController
      */
     public function updateCourse()
     {
-        $p = Request::post();
+        $params = Request::only(['id', 'title', 'cover', 'class_id', 'video_id', 'teacher_id', 'admin_id'], 'post');
+        $validate   = Validate::make([
+            'id|课程id'  => 'require|integer',
+            'title|标题' => 'require|max:30',
+            'cover|封面图' => 'require',
+            'class_id|班级ID' => 'require|integer',
+            'video_id|视频ID' => 'integer',
+            'teacher_id|教师ID' => 'require|integer',
+            'admin_id|管理员ID' => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
         $where = [
             'id' => $p['id']
         ];
         $data = [
-            'title' => $p['title'],
-            'cover' => $p['cover'],
-			'class_id' => $p['class_id'],
-			'video_id' => $p['video_id'],
-			'teacher_id' => $p['teacher_id'],
-			'admin_id' => $p['admin_id']
+            'title' => $params['title'],
+            'cover' => $params['cover'],
+			'class_id' => $params['class_id'],
+			'video_id' => $params['video_id'],
+			'teacher_id' => $params['teacher_id'],
+			'admin_id' => $params['admin_id']
         ];
         $res = $this->Course_model->updateCourse($where, $data);
         if($res)
         {
-            return json([
-                'code' => 20000,
-                'data' => $p
-            ]);
+            return $this->_success($params);
         }
-        return json([
-            'code' => 0,
-            'data' => []
-        ]);
+        return $this->serviceError();
     }
 
     /**
@@ -156,24 +169,21 @@ class Course extends MyController
      */
     public function deleteCourse()
     {
-        $p = Request::post();
-        $where = [
-            'id' => $p['id']
-        ];
+        $params = Request::only(['id'], 'post');
+        $validate   = Validate::make([
+            'id|课程ID'  => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
         $data = [
             'status' => 0,
         ];
-        $res = $this->Course_model->updateCourse($where, $data);
+        $res = $this->Course_model->updateCourse($params, $data);
         if($res)
         {
-            return json([
-                'code' => 20000,
-                'data' => $p
-            ]);
+            return $this->_success($params);
         }
-        return json([
-            'code' => 0,
-            'data' => []
-        ]);
+        return $this->serviceError();
     }
 }

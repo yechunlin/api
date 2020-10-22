@@ -28,13 +28,18 @@ class MyController extends Controller
         ]), $httpCode, $this->header);
     }
 
+    public function notFoundError()
+    {
+        return $this->_error(4001, 404);
+    }
+
     public function validateError($msg='请求出错')
     {
         return $this->_error(4000, 400, $msg);
     }
 
-    public function serviceError()
+    public function serviceError($msg='')
     {
-        return $this->_error(5000, 500);
+        return $this->_error(5000, 500, $msg);
     }
 }

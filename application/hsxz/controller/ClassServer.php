@@ -26,14 +26,14 @@ class ClassServer extends MyController
             'id|用户ID'  => 'require|integer'
         ]);
         if(!$validate->check($params)) {
-            return $this->_error(4000, 400, $validate->getError());
+            return $this->validateError($validate->getError());
         }
 		$res = $this->Class_model->getClassInfo(['id' => $params['id']]);
         if($res)
         {
             return $this->_success($res);
         }
-        return $this->_error(4001, 404);
+        return $this->notFoundError();
 	}
 
     /**
@@ -52,7 +52,7 @@ class ClassServer extends MyController
             'admin_id' => 'require|integer'
         ]);
         if(!$validate->check($params)) {
-            return $this->_error(4000, 400, $validate->getError());
+            return $this->validateError($validate->getError());
         }
         $params['dated'] = date('Y-m-d H:i:s');
 		$res = $this->Class_model->addClass($params, true);
@@ -86,7 +86,7 @@ class ClassServer extends MyController
             'limit'  => 'integer'
         ]);
         if(!$validate->check($params)) {
-            return $this->_error(4000, 400, $validate->getError());
+            return $this->validateError($validate->getError());
         }
         $where = ['status' => $params['status']];
         if($params['id'])
@@ -123,7 +123,7 @@ class ClassServer extends MyController
             'description|描述'  => 'max:50'
         ]);
         if(!$validate->check($params)) {
-            return $this->_error(4000, 400, $validate->getError());
+            return $this->validateError($validate->getError());
         }
         $where = [
             'id' => $params['id']
@@ -137,7 +137,7 @@ class ClassServer extends MyController
         {
             return $this->_success($params);
         }
-        return $this->_error(5000, 500);
+        return $this->serviceError();
     }
 
     /**
@@ -150,7 +150,7 @@ class ClassServer extends MyController
             'id|班级ID'  => 'require|integer'
         ]);
         if(!$validate->check($params)) {
-            return $this->_error(4000, 400, $validate->getError());
+            return $this->validateError($validate->getError());
         }
         $where = [
             'id' => $params['id']
@@ -163,6 +163,6 @@ class ClassServer extends MyController
         {
             return $this->_success($params);
         }
-        return $this->_error(5000, 500);
+        return $this->serviceError();
     }
 }
