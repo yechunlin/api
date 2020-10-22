@@ -140,7 +140,7 @@ return [
     'error_message'          => '页面错误！请稍后再试～',
     // 显示错误信息
     'show_error_msg'         => false,
-    // 异常处理handle类 留空使用 \think\exception\Handle
+    // 异常处理handle类 留空使用 \think\exception\Handle \\myextend\\MyException
     'exception_handle'       => '',
 
 ];

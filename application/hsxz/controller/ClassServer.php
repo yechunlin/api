@@ -1,11 +1,12 @@
 <?php
 namespace app\hsxz\controller;
 
-use think\Controller;
+use app\common\controller\MyController;
 use think\facade\Request;
 use app\hsxz\model\ClassModel;
+use think\Validate;
 
-class ClassServer extends Controller
+class ClassServer extends MyController
 {
 	private $Class_model;
 	public function __construct()
@@ -20,12 +21,19 @@ class ClassServer extends Controller
      */
 	public function getClassInfo()
 	{
-		$id = Request::get('id');
-		$res = $this->Class_model->getClassInfo(['id' => $id]);
-		return json([
-			'code' => 20000,
-			'data' => $res
-		]);
+        $params = Request::only(['id'], 'get');
+        $validate   = Validate::make([
+            'id|用户ID'  => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->_error(4000, 400, $validate->getError());
+        }
+		$res = $this->Class_model->getClassInfo(['id' => $params['id']]);
+        if($res)
+        {
+            return $this->_success($res);
+        }
+        return $this->_error(4001, 404);
 	}
 
     /**
@@ -33,17 +41,27 @@ class ClassServer extends Controller
      */
 	public function addClass()
 	{
-		$p = Request::post();
-		$p['dated'] = date('Y-m-d H:i:s');
-		$res = $this->Class_model->addClass($p, true);
-		if($res)
-		{
-		    $p['id'] = $res;
- 			return json([
-				'code' => 20000,
-				'data' => $p
-			]);
-		}
+        $params = Request::only([
+            'name' => '',
+            'description' => '',
+            'admin_id' => 0
+        ], 'post');
+        $validate = Validate::make([
+            'name' => 'require|max:20',
+            'description' => 'require|max:50',
+            'admin_id' => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->_error(4000, 400, $validate->getError());
+        }
+        $params['dated'] = date('Y-m-d H:i:s');
+		$res = $this->Class_model->addClass($params, true);
+        if($res)
+        {
+            $params['id'] = $res;
+            return $this->_success($params);
+        }
+        return $this->serviceError();
 	}
 
     /**
@@ -51,35 +69,44 @@ class ClassServer extends Controller
      */
     public function getClass()
     {
-        $id = Request::get('id');
-        $name = Request::get('name');
-        $status = Request::get('status', 1);
-        $sort = Request::get('sort', 1);
-        $page = Request::get('page', 1);
-        $limit = Request::get('limit', 10);
-        $where = ['status' => $status];
-        if($id)
-        {
-            $where['id'] = $id;
+        $params = Request::only([
+            'id' => 0,
+            'name' => '',
+            'status' => 1,
+            'sort' => 1,
+            'page' => 1,
+            'limit' => 20
+        ], 'get');
+        $validate   = Validate::make([
+            'id|用户ID'  => 'integer',
+            'name|用户名'  => 'max:20',
+            'status'  => 'integer',
+            'sort'  => 'integer',
+            'page'  => 'integer',
+            'limit'  => 'integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->_error(4000, 400, $validate->getError());
         }
-        if($name)
+        $where = ['status' => $params['status']];
+        if($params['id'])
+        {
+            $where['id'] = $params['id'];
+        }
+        if($params['name'])
         {
             $likeWhere = [
-				['field' => 'name', 'value' => $name]
+				['field' => 'name', 'value' => $params['name']]
 			];
             $count = $this->Class_model->getLikeCount($where, $likeWhere);
-            $list  = $this->Class_model->getLikeClass($where, $likeWhere, $page, $limit, $sort);
+            $list  = $this->Class_model->getLikeClass($where, $likeWhere, $params['page'], $params['limit'], $params['sort']);
         }else{
 		    $count = $this->Class_model->getCount($where);
-			$list  = $this->Class_model->getClass($where, $page, $limit, $sort);
+			$list  = $this->Class_model->getClass($where, $params['page'], $params['limit'], $params['sort']);
 		}
-
-        return json([
-            'code' => 20000,
-            'data' => [
-                'total' => $count,
-                'items' => $list
-            ]
+        return $this->_success([
+            'total' => $count,
+            'items' => $list
         ]);
     }
 
@@ -89,26 +116,28 @@ class ClassServer extends Controller
      */
     public function updateClass()
     {
-        $p = Request::post();
+        $params = Request::only(['id', 'name', 'description'], 'post');
+        $validate   = Validate::make([
+            'id|用户ID'  => 'require|integer',
+            'name|用户名'  => 'max:20',
+            'description|描述'  => 'max:50'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->_error(4000, 400, $validate->getError());
+        }
         $where = [
-            'id' => $p['id']
+            'id' => $params['id']
         ];
         $data = [
-            'name' => $p['name'],
-            'description' => $p['description']
+            'name' => $params['name'],
+            'description' => $params['description']
         ];
         $res = $this->Class_model->updateClass($where, $data);
         if($res)
         {
-            return json([
-                'code' => 20000,
-                'data' => $p
-            ]);
+            return $this->_success($params);
         }
-        return json([
-            'code' => 0,
-            'data' => []
-        ]);
+        return $this->_error(5000, 500);
     }
 
     /**
@@ -116,9 +145,15 @@ class ClassServer extends Controller
      */
     public function deleteClass()
     {
-        $p = Request::post();
+        $params = Request::only(['id'], 'post');
+        $validate   = Validate::make([
+            'id|班级ID'  => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->_error(4000, 400, $validate->getError());
+        }
         $where = [
-            'id' => $p['id']
+            'id' => $params['id']
         ];
         $data = [
             'status' => 0,
@@ -126,14 +161,8 @@ class ClassServer extends Controller
         $res = $this->Class_model->updateClass($where, $data);
         if($res)
         {
-            return json([
-                'code' => 20000,
-                'data' => $p
-            ]);
+            return $this->_success($params);
         }
-        return json([
-            'code' => 0,
-            'data' => []
-        ]);
+        return $this->_error(5000, 500);
     }
 }

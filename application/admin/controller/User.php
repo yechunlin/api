@@ -1,11 +1,12 @@
 <?php
 namespace app\admin\controller;
 
-use think\Controller;
+use app\common\controller\MyController;
 use think\facade\Request;
 use app\admin\model\UserModel;
+use think\Validate;
 
-class User extends Controller
+class User extends MyController
 {
 	private $User_model;
 	public function __construct()
@@ -15,42 +16,36 @@ class User extends Controller
 
 	public function login()
 	{
-
-		$username = Request::post('username');
-        $password = Request::post('password');
+        $params = Request::only(['username','password'], 'post');
+        $validate   = Validate::make([
+            'username|用户名'  => 'require',
+            'password|密码'   => 'require'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->_error(4000, 400, $validate->getError());
+        }
 		$where = [
-			'username' => $username,
-			'password' => md5($password),
+			'username' => $params['username'],
+			'password' => md5($params['password']),
             'status' => 1
 		];
 		$user = $this->User_model->getUserInfo($where);
 		if($user)
 		{	
-			$access_token = md5($username.$password);
+			$access_token = md5($params['username'].$params['password']);
 			$res = $this->User_model->updateUser(['id' => $user['id']], [
 				'lastdated' => date('Y-m-d H:i:s'),
 				'access_token' => $access_token
 			]);
 			if($res)
 			{
-				return json([
-					'code' => 20000,
-					'data' => [
-						'token' => $access_token
-					]
-				]);
-			}else
-			{
-			    return json([
-					'code' => 60204,
-					'data' => []
-				]);
+			    return $this->_success([
+                    'token' => $access_token
+                ]);
 			}
+            return $this->_error(5000, 500);
         }
-        return json([
-            'code' => 60204,
-            'data' => []
-        ]);
+        return $this->_error(4001, 404);
 	}
 
 	public function info()
@@ -61,11 +56,17 @@ class User extends Controller
             'avatar' => 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
             'name' => 'Super Admin'
         ];
-		$token = Request::get('token');
-		return json([
-		    'code' => 20000,
-            'data' => $userInfo[$token]
+        $params = Request::only(['token'], 'get');
+        $validate   = Validate::make([
+            'token|令牌'   => 'require'
         ]);
+        if(!$validate->check($params)) {
+            return $this->_error(4000, 400, $validate->getError());
+        }
+        if(!isset($userInfo[$params['token']])){
+            return $this->_error(4003, 403, '非法令牌');
+        }
+        return $this->_success($userInfo[$params['token']]);
 	}
 
 }

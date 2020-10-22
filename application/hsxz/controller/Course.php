@@ -1,13 +1,14 @@
 <?php
 namespace app\hsxz\controller;
 
-use think\Controller;
+use app\common\controller\MyController;
 use think\facade\Request;
 use app\hsxz\model\ClassModel;
 use app\hsxz\model\UserModel;
 use app\hsxz\model\CourseModel;
+use think\Validate;
 
-class Course extends Controller
+class Course extends MyController
 {
 	private $Course_model;
 	public function __construct()
@@ -22,12 +23,19 @@ class Course extends Controller
      */
 	public function getCourseInfo()
 	{
-		$id = Request::get('id');
-		$res = $this->Course_model->getCourseInfo(['id' => $id]);
-		return json([
-			'code' => 20000,
-			'data' => $res
-		]);
+	    $params = Request::only(['id'], 'get');
+        $validate   = Validate::make([
+            'id|课程ID'  => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->_error(4000, 400, $validate->getError());
+        }
+		$res = $this->Course_model->getCourseInfo(['id' => $params['id']]);
+        if($res)
+        {
+            return $this->_success($res);
+        }
+        return $this->_error(4001, 404);
 	}
 
     /**
@@ -35,8 +43,26 @@ class Course extends Controller
      */
 	public function addCourse()
 	{
-		$p = Request::post();
-		$res = $this->Course_model->addCourse($p, true);
+        $params = Request::only([
+            'title' => '',
+            'cover' => '',
+            'class_id' => 0,
+            'video_id' => 0,
+            'teacher_id' => 0,
+            'admin_id' => 0
+        ], 'post');
+        $validate = Validate::make([
+            'title|标题' => 'require|max:30',
+            'cover|封面图' => 'require',
+            'class_id|班级ID' => 'require|integer',
+            'video_id|视频ID' => 'integer',
+            'teacher_id|教师ID' => 'require|integer',
+            'admin_id|管理员ID' => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
+		$res = $this->Course_model->addCourse($params, true);
 		if($res)
 		{
 		    $p['id'] = $res;
@@ -45,6 +71,7 @@ class Course extends Controller
 				'data' => $p
 			]);
 		}
+		$this->_error();
 	}
 
     /**
