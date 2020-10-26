@@ -1,13 +1,14 @@
 <?php
 namespace app\hsxz\controller;
 
-use think\Controller;
+use app\common\controller\MyController;
 use think\facade\Request;
 use app\hsxz\model\VideoModel;
+use think\Validate;
 
-class VideoServer extends Controller
+class Video extends MyController
 {
-	private $video_model;
+	private $Video_model;
 	public function __construct()
 	{
 		$this->Video_model = new VideoModel();
@@ -29,7 +30,7 @@ class VideoServer extends Controller
 	}
 
     /**
-     * 添加班级
+     * 添加视频
      */
 	public function addVideo()
 	{
@@ -51,19 +52,56 @@ class VideoServer extends Controller
      */
     public function getVideo()
     {
-        $status = Request::get('status', 1);
-        $sort = Request::get('sort', 1);
-        $page = Request::get('page', 1);
-        $limit = Request::get('limit', 10);
-        $where = ['status' => $status];
+        $params = Request::only([
+            'id'    => 0,
+            'class_id' => 0,
+            'course_id'=> 0,
+            'status' => 1,
+            'sort'  => 1,
+            'page'  => 1,
+            'limit' => 20
+        ], 'get');
+        $validate   = Validate::make([
+            'id|视频ID' => 'integer',
+            'class_id|班级ID'=> 'integer',
+            'course_id|课程ID'=> 'integer',
+            'status'   => 'integer',
+            'sort'     => 'integer',
+            'page'     => 'integer',
+            'limit'    => 'integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
+        $where = ['status' => $params['status']];
+        if($params['id'])
+        {
+            $where['id'] = $params['id'];
+        }else{
+            if($params['class_id']){
+                $where['class_id'] = $params['class_id'];
+            }
+            if($params['course_id']){
+                $where['course_id'] = $params['course_id'];
+            }
+        }
         $count = $this->Video_model->getCount($where);
-        $list = $this->Video_model->getVideo($where, $page, $limit, $sort);
-        return json([
-            'code' => 20000,
-            'data' => [
-                'total' => $count,
-                'items' => $list
-            ]
+        $list  = $this->Video_model->getVideo($where, $params['page'], $params['limit'], $params['sort']);
+
+        $classModel = new \app\hsxz\model\ClassModel();
+        $courseModel = new \app\hsxz\model\CourseModel();
+        $userModel = new \app\hsxz\model\UserModel();
+        foreach($list as $key => &$val){
+            $tmp = $classModel->getClassInfo(['id' => $val['class_id']], 'name');
+            $val['class_name'] = $tmp['name'];
+            $tmp = $courseModel->getCourseInfo(['id' => $val['course_id']], 'title');
+            $val['course_name'] = $tmp['title'];
+            $tmp = $userModel->getUserInfo(['id' => $val['teacher_id']], 'username');
+            $val['teacher_name'] = $tmp['username'];
+        }
+        return $this->_success([
+            'total' => $count,
+            'items' => $list
         ]);
     }
 

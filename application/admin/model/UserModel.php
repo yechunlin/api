@@ -23,4 +23,46 @@ class UserModel extends Model
     {
         return UserModel::where($where)->update($data);
     }
+
+    public function getUser($where=[], $page=1, $limit=10, $sort=1)
+    {
+        $order = !intval($sort) ? 'asc' : 'desc';
+        $res = UserModel::where($where)
+            ->field('*')
+            ->order('id', $order)
+            ->page($page, $limit)
+            ->select();
+        return $res;
+    }
+
+    public function getCount($where=[])
+    {
+        return UserModel::where($where)->count('id');
+    }
+
+    public function getLikeUser($where=[], $likeWhere=[], $page=1, $limit=10, $sort=1)
+    {
+        $order = !intval($sort) ? 'asc' : 'desc';
+        $res = UserModel::where($where)->where(function ($query) use ($likeWhere){
+            foreach($likeWhere as $val)
+            {
+                $query->whereLike($val['field'], "%{$val['value']}%");
+            }
+        })->field('*')
+            ->order('id', $order)
+            ->page($page, $limit)
+            ->select();
+        return $res;
+    }
+
+    public function getLikeCount($where=[], $likeWhere=[])
+    {
+        $res = UserModel::where($where)->where(function($query) use ($likeWhere){
+            foreach($likeWhere as $val)
+            {
+                $query->whereLike($val['field'], "%{$val['value']}%");
+            }
+        })->count('id');
+        return $res;
+    }
 }

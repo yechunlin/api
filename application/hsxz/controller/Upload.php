@@ -32,9 +32,9 @@ class Upload extends MyController
 			return $this->validateError('上传失败');
 		}
 		$file = $_FILES[$fileName];
-		$saveFileExtention = Request::post('save_file_extention', '');
-		$saveFileType = Request::post('save_file_type', '');
-		$saveFileName = Request::post('save_file_name', md5(rand(10000,999).date('Y-m-d H:i:s').rand(10000,99999)).'.'.$saveFileExtention);
+        $saveFileExtention = Request::post('save_file_extention') ?: 'mp4';
+		$saveFileType = Request::post('save_file_type');
+        $saveFileName = Request::post('save_file_name') ?: md5(rand(10000,999).date('Y-m-d H:i:s').rand(10000,99999)).'.'.$saveFileExtention;
 
 		$base_path = 'public/upload/videos/'.date('Ymd').'/';
 		$path = env('ROOT_PATH').$base_path;

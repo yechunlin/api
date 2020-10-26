@@ -27,9 +27,19 @@ Route::group('Course', function () {
     Route::post('deleteCourse', 'hsxz/Course/deleteCourse');
 });
 
+//视频
+Route::group('Video', function () {
+    Route::get('getVideoInfo', 'hsxz/Video/getVideoInfo');
+    Route::get('getVideo', 'hsxz/Video/getVideo');
+    Route::post('addVideo', 'hsxz/Video/addVideo');
+    Route::post('updateVideo', 'hsxz/Video/updateVideo');
+    Route::post('deleteVideo', 'hsxz/Video/deleteVideo');
+});
+
 Route::group('admin/user', function () {
     Route::post('login', 'admin/User/login');
     Route::get('info', 'admin/User/info');
+    Route::get('getUser', 'admin/User/getUser');
 });
 
 //upload

@@ -66,7 +66,7 @@ class Course extends MyController
 		if($res)
 		{
 		    $params['id'] = $res;
- 			return return $this->_success($params);;
+ 			return $this->_success($params);
 		}
 		return $this->serviceError();
 	}
@@ -77,40 +77,48 @@ class Course extends MyController
     public function getCourse()
     {
         $params = Request::only([
-            'id' => 0,
+            'id'    => 0,
+            'class_id' => 0,
             'title' => '',
-            'status' => 1,
-            'sort' => 1,
-            'page' => 1,
+            'status'=> 1,
+            'sort'  => 1,
+            'page'  => 1,
             'limit' => 20
         ], 'get');
         $validate   = Validate::make([
-            'id|课程ID'  => 'integer',
-            'title|标题'  => 'max:20',
-            'status'  => 'integer',
-            'sort'  => 'integer',
-            'page'  => 'integer',
-            'limit'  => 'integer'
+            'id|课程ID' => 'integer',
+            'class_id|班级ID' => 'integer',
+            'title|标题'=> 'max:20',
+            'status'   => 'integer',
+            'sort'     => 'integer',
+            'page'     => 'integer',
+            'limit'    => 'integer'
         ]);
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
         $where = ['status' => $params['status']];
-        if($id)
+        if($params['id'])
         {
             $where['id'] = $params['id'];
-        }
-        if($title)
-        {
-            $likeWhere = [
-				['field' => 'title', 'value' => $params['title']]
-			];
-            $count = $this->Course_model->getLikeCount($where, $likeWhere);
-            $list  = $this->Course_model->getLikeCourse($where, $likeWhere, $page, $limit, $sort);
+            $count = $this->Course_model->getCount($where);
+            $list  = $this->Course_model->getCourse($where, $params['page'], $params['limit'], $params['sort']);
         }else{
-		    $count = $this->Course_model->getCount($where);
-			$list  = $this->Course_model->getCourse($where, $page, $limit, $sort);
-		}
+            if($params['class_id']){
+                $where['class_id'] = $params['class_id'];
+            }
+            if($params['title']){
+                $likeWhere = [
+                    ['field' => 'title', 'value' => $params['title']]
+                ];
+                $count = $this->Course_model->getLikeCount($where, $likeWhere);
+                $list  = $this->Course_model->getLikeCourse($where, $likeWhere, $params['page'], $params['limit'], $params['sort']);
+            }else{
+                $count = $this->Course_model->getCount($where);
+                $list  = $this->Course_model->getCourse($where, $params['page'], $params['limit'], $params['sort']);
+            }
+        }
+
 		$classModel = new ClassModel();
 		$userModel = new UserModel();
 		foreach($list as $key => &$val){
@@ -146,7 +154,7 @@ class Course extends MyController
             return $this->validateError($validate->getError());
         }
         $where = [
-            'id' => $p['id']
+            'id' => $params['id']
         ];
         $data = [
             'title' => $params['title'],

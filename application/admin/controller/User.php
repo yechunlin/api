@@ -69,4 +69,47 @@ class User extends MyController
         return $this->_success($userInfo[$params['token']]);
 	}
 
+	public function getUser()
+    {
+        $params = Request::only([
+            'id'    => 0,
+            'username' => '',
+            'status'=> 1,
+            'sort'  => 1,
+            'page'  => 1,
+            'limit' => 20
+        ], 'get');
+        $validate   = Validate::make([
+            'id|用户ID' => 'integer',
+            'username|昵称'=> 'max:20',
+            'status'   => 'integer',
+            'sort'     => 'integer',
+            'page'     => 'integer',
+            'limit'    => 'integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
+        $where = ['status' => $params['status']];
+        if($params['id'])
+        {
+            $where['id'] = $params['id'];
+        }
+        if($params['username'])
+        {
+            $likeWhere = [
+                ['field' => 'username', 'value' => $params['username']]
+            ];
+            $count = $this->User_model->getLikeCount($where, $likeWhere);
+            $list  = $this->User_model->getLikeUser($where, $likeWhere, $params['page'], $params['limit'], $params['sort']);
+        }else{
+            $count = $this->User_model->getCount($where);
+            $list  = $this->User_model->getUser($where, $params['page'], $params['limit'], $params['sort']);
+        }
+        return $this->_success([
+            'total' => $count,
+            'items' => $list
+        ]);
+    }
+
 }
