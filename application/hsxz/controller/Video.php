@@ -96,13 +96,44 @@ class Video extends MyController
             $val['class_name'] = $tmp['name'];
             $tmp = $courseModel->getCourseInfo(['id' => $val['course_id']], 'title');
             $val['course_name'] = $tmp['title'];
-            $tmp = $userModel->getUserInfo(['id' => $val['teacher_id']], 'username');
-            $val['teacher_name'] = $tmp['username'];
+            $tmp = $userModel->getUserInfo(['id' => $val['admin_id']], 'username');
+            $val['admin_name'] = $tmp['username'];
         }
         return $this->_success([
             'total' => $count,
             'items' => $list
         ]);
+    }
+
+    /**
+     * 修改视频信息
+     */
+    public function updateVideo()
+    {
+        $params = Request::only(['id', 'path', 'class_id', 'course_id'], 'post');
+        $validate   = Validate::make([
+            'id|视频id'  => 'require|integer',
+            'path|视频地址' => 'require',
+            'class_id|班级ID' => 'require|integer',
+            'course_id|课程ID' => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
+        $where = [
+            'id' => $params['id']
+        ];
+        $data = [
+            'path' => $params['path'],
+			'class_id' => $params['class_id'],
+			'course_id' => $params['course_id']
+        ];
+        $res = $this->Video_model->updateVideo($where, $data);
+        if($res)
+        {
+            return $this->_success($params);
+        }
+        return $this->serviceError();
     }
 
     /**
