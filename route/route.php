@@ -36,6 +36,16 @@ Route::group('Video', function () {
     Route::post('deleteVideo', 'hsxz/Video/deleteVideo');
 });
 
+//课程表
+Route::group('Timetable', function () {
+    Route::get('getTimeTableInfo', 'hsxz/TimeTable/getVideoInfo');
+    Route::get('getTimeTable', 'hsxz/TimeTable/getTimeTable');
+    Route::post('addTimeTable', 'hsxz/TimeTable/addTimeTable');
+    Route::post('updateTimeTable', 'hsxz/TimeTable/updateTimeTable');
+    Route::post('deleteTimeTable', 'hsxz/TimeTable/deleteTimeTable');
+});
+
+//管理员
 Route::group('admin/user', function () {
     Route::post('login', 'admin/User/login');
     Route::get('info', 'admin/User/info');

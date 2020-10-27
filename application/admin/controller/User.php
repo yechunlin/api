@@ -50,23 +50,20 @@ class User extends MyController
 
 	public function info()
 	{
-	    $userInfo[md5('admin123456')] = [
-            'roles' => ['admin'],
-            'introduction' => 'I am a super administrator',
-            'avatar' => 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-            'name' => 'Super Admin'
-        ];
         $params = Request::only(['token'], 'get');
         $validate   = Validate::make([
             'token|令牌'   => 'require'
         ]);
         if(!$validate->check($params)) {
-            return $this->_error(4000, 400, $validate->getError());
+            return $this->validateError($validate->getError());
         }
-        if(!isset($userInfo[$params['token']])){
-            return $this->_error(4003, 403, '非法令牌');
+        $user = $this->User_model->getUserInfo(['access_token' => $params['token']], 'id,username,avatar');
+        if($user)
+        {
+            $user['roles'] = ['admin'];
+            return $this->_success($user);
         }
-        return $this->_success($userInfo[$params['token']]);
+        return $this->_error(4003, 403, '非法令牌');
 	}
 
 	public function getUser()
