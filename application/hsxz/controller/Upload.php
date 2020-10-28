@@ -15,7 +15,7 @@ class Upload extends MyController
 			if($info){
 				// 成功上传后 获取上传信息
 				return $this->_success([
-					'saveName' => 'public/upload/images/'.$info->getSaveName()
+					'saveName' => 'public/upload/images/' . str_replace('\\', '/', $info->getSaveName())
 				]);
 			}else{
 				// 上传失败获取错误信息

@@ -50,6 +50,8 @@ Route::group('admin/user', function () {
     Route::post('login', 'admin/User/login');
     Route::get('info', 'admin/User/info');
     Route::get('getUser', 'admin/User/getUser');
+    Route::post('logout', 'admin/User/logout');
+    Route::post('updateUser', 'admin/User/updateUser');
 });
 
 //upload

@@ -17,7 +17,7 @@ class User extends MyController
 	public function login()
 	{
         $params = Request::only(['username','password'], 'post');
-        $validate   = Validate::make([
+        $validate = Validate::make([
             'username|用户名'  => 'require',
             'password|密码'   => 'require'
         ]);
@@ -109,4 +109,31 @@ class User extends MyController
         ]);
     }
 
+    public function logout()
+    {
+        return $this->_success();
+    }
+
+    public function updateUser()
+    {
+        $params = Request::only(['id', 'username', 'avatar'], 'post');
+        $validate   = Validate::make([
+            'id|用户ID' => 'require|integer',
+            'username|昵称'=> 'require|max:20',
+            'avatar|图像'  => 'require',
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
+        $data = [
+            'username' => $params['username'],
+            'avatar' => $params['avatar']
+        ];
+        $res = $this->User_model->updateUser(['id' => $params['id']], $data);
+        if($res)
+        {
+            return $this->_success($data);
+        }
+        return $this->serviceError();
+    }
 }
