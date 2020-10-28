@@ -2,9 +2,39 @@
 namespace app\common\controller;
 
 use think\Controller;
+use myextend\Edcrypt;
+use think\facade\Request;
 
 class MyController extends Controller
-{
+{	
+	private $token_time_out = 3600;
+	private $wirtePath = ['admin/user/login'];
+	public function __construct()
+	{
+		if( !in_array(Request::path(), $this->wirtePath) )
+		{
+			$edcrypt = new Edcrypt();
+			$header = Request::header();
+			$token = $header['x-token'];
+			$user_id = $header['x-user-id'];
+			$org_token_arr = explode('_', $edcrypt->decrypt($token));
+			if(!is_array($org_token_arr) || !isset($org_token_arr[0]) || !isset($org_token_arr[1]))
+			{
+				$this->_error(4003, 403);
+			}
+
+			if($org_token_arr[1] < time())
+			{
+				$this->_error(4005, 403);
+			}
+
+			if($user_id != $org_token_arr[0])
+			{
+				$this->_error(4003, 403);
+			}
+		}
+	}
+
     protected $header = [
         'Content-Type' => 'application/json; charset=utf-8'
     ];

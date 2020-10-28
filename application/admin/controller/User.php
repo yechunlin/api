@@ -3,15 +3,17 @@ namespace app\admin\controller;
 
 use app\common\controller\MyController;
 use think\facade\Request;
-use app\admin\model\UserModel;
 use think\Validate;
+use app\admin\model\UserModel;
+use myextend\Edcrypt;
 
 class User extends MyController
 {
-	private $User_model;
+	private $user_model;
 	public function __construct()
 	{
-		$this->User_model = new UserModel();
+		parent::__construct();
+		$this->user_model = new UserModel();
 	}
 
 	public function login()
@@ -22,42 +24,43 @@ class User extends MyController
             'password|密码'   => 'require'
         ]);
         if(!$validate->check($params)) {
-            return $this->_error(4000, 400, $validate->getError());
+            return $this->validateError($validate->getError());
         }
 		$where = [
 			'username' => $params['username'],
 			'password' => md5($params['password']),
             'status' => 1
 		];
-		$user = $this->User_model->getUserInfo($where);
+		$user = $this->user_model->getUserInfo($where);
 		if($user)
-		{	
-			$access_token = md5($params['username'].$params['password']);
-			$res = $this->User_model->updateUser(['id' => $user['id']], [
-				'lastdated' => date('Y-m-d H:i:s'),
-				'access_token' => $access_token
+		{	$edcrypt = new Edcrypt();
+			$token = $edcrypt->encrypt($user['id'].'_'.time().'_'.md5($user['id']));
+			$res = $this->user_model->updateUser(['id' => $user['id']], [
+				'lastdated' => date('Y-m-d H:i:s')
 			]);
 			if($res)
 			{
 			    return $this->_success([
-                    'token' => $access_token
+                    'token' => $token,
+                    'user_id' => $user['id']
                 ]);
 			}
-            return $this->_error(5000, 500);
+            return $this->serviceError();
         }
-        return $this->_error(4001, 404);
+        return $this->notFoundError();
 	}
 
 	public function info()
 	{
-        $params = Request::only(['token'], 'get');
+        $params = Request::only(['user_id', 'token'], 'get');
         $validate   = Validate::make([
+            'user_id|用户id'   => 'require|integer',
             'token|令牌'   => 'require'
         ]);
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
-        $user = $this->User_model->getUserInfo(['access_token' => $params['token']], 'id,username,avatar');
+        $user = $this->user_model->getUserInfo(['id' => $params['user_id']], 'username,avatar');
         if($user)
         {
             $user['roles'] = ['admin'];
@@ -97,11 +100,11 @@ class User extends MyController
             $likeWhere = [
                 ['field' => 'username', 'value' => $params['username']]
             ];
-            $count = $this->User_model->getLikeCount($where, $likeWhere);
-            $list  = $this->User_model->getLikeUser($where, $likeWhere, $params['page'], $params['limit'], $params['sort']);
+            $count = $this->user_model->getLikeCount($where, $likeWhere);
+            $list  = $this->user_model->getLikeUser($where, $likeWhere, $params['page'], $params['limit'], $params['sort']);
         }else{
-            $count = $this->User_model->getCount($where);
-            $list  = $this->User_model->getUser($where, $params['page'], $params['limit'], $params['sort']);
+            $count = $this->user_model->getCount($where);
+            $list  = $this->user_model->getUser($where, $params['page'], $params['limit'], $params['sort']);
         }
         return $this->_success([
             'total' => $count,
@@ -129,7 +132,7 @@ class User extends MyController
             'username' => $params['username'],
             'avatar' => $params['avatar']
         ];
-        $res = $this->User_model->updateUser(['id' => $params['id']], $data);
+        $res = $this->user_model->updateUser(['id' => $params['id']], $data);
         if($res)
         {
             return $this->_success($data);

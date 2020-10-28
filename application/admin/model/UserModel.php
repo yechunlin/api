@@ -14,9 +14,12 @@ class UserModel extends Model
 		return $res;
 	}
 
-	public function getUserInfo($where=[])
+	public function getUserInfo($where=[], $fields='*')
 	{
-        return UserModel::where($where)->find();
+        return UserModel::where($where)
+			->field($fields)
+			->findOrEmpty();
+		return $res;
 	}
 
 	public function updateUser($where=[], $data=[])
