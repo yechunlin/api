@@ -11,6 +11,7 @@ class Video extends MyController
 	private $video_model;
 	public function __construct()
 	{
+        parent::__construct();
 		$this->video_model = new VideoModel();
 	}
 

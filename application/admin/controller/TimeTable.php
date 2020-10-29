@@ -17,6 +17,7 @@ class TimeTable extends MyController
     private $time_table_model;
     public function __construct()
     {
+        parent::__construct();
         $this->time_table_model = new TimeTableModel();
     }
 

@@ -6,38 +6,65 @@ use myextend\Edcrypt;
 use think\facade\Request;
 
 class MyController extends Controller
-{	
-	private $token_time_out = 3600;
+{
 	private $wirtePath = ['admin/user/login'];
-	public function __construct()
-	{
-		if( !in_array(Request::path(), $this->wirtePath) )
-		{
-			$edcrypt = new Edcrypt();
-			$header = Request::header();
-			$token = $header['x-token'];
-			$user_id = $header['x-user-id'];
-			$org_token_arr = explode('_', $edcrypt->decrypt($token));
-			if(!is_array($org_token_arr) || !isset($org_token_arr[0]) || !isset($org_token_arr[1]))
-			{
-				$this->_error(4003, 403);
-			}
-
-			if($org_token_arr[1] < time())
-			{
-				$this->_error(4005, 403);
-			}
-
-			if($user_id != $org_token_arr[0])
-			{
-				$this->_error(4003, 403);
-			}
-		}
-	}
-
     protected $header = [
         'Content-Type' => 'application/json; charset=utf-8'
     ];
+
+	public function __construct()
+	{
+        //$this->checkToken();
+	}
+
+	public function checkToken()
+    {
+        if( !in_array(Request::path(), $this->wirtePath) )
+        {
+            $edcrypt = new Edcrypt();
+            $header = Request::header();
+
+            if(!isset($header['x-token']))
+            {
+                $this->orgResponse(4006, 403);
+
+            }
+            if(!isset($header['x-user-id']))
+            {
+                $this->orgResponse(4007, 403);
+            }
+            $token = $header['x-token'];
+            $user_id = $header['x-user-id'];
+            $org_token_arr = explode('_', $edcrypt->decrypt($token));
+            if(!is_array($org_token_arr) || !isset($org_token_arr[0]) || !isset($org_token_arr[1]))
+            {
+                $this->orgResponse(4003, 403);
+            }
+
+            if($org_token_arr[1] < time())
+            {
+                $this->orgResponse(4005, 403);
+            }
+
+            if($user_id != $org_token_arr[0])
+            {
+                $this->orgResponse(4003, 403);
+            }
+        }
+    }
+
+    public function orgResponse($code=0, $httpCode=0, $msg='')
+    {
+        $msg = $msg ?: config('error.'.$code);
+        $httpMsg = config('error.'.$httpCode);
+        header("HTTP/1.1 {$httpCode} {$httpMsg}");
+        header("Content-type: application/json; charset=utf-8");
+        die(json_encode([
+            'status' => 0,
+            'code'   => $code,
+            'msg'    => $msg
+        ]));
+    }
 
     public function _success($data=[])
     {

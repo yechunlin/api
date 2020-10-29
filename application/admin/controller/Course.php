@@ -3,8 +3,6 @@ namespace app\admin\controller;
 
 use app\common\controller\MyController;
 use think\facade\Request;
-use app\admin\model\ClassModel;
-use app\admin\model\UserModel;
 use app\admin\model\CourseModel;
 use think\Validate;
 
@@ -13,6 +11,7 @@ class Course extends MyController
 	private $course_model;
 	public function __construct()
 	{
+        parent::__construct();
 		$this->course_model = new CourseModel();
 	}
 
@@ -119,8 +118,8 @@ class Course extends MyController
             }
         }
 
-		$classModel = new ClassModel();
-		$userModel = new UserModel();
+		$classModel = new \app\admin\model\ClassModel();
+		$userModel = new \app\admin\model\UserModel();
 		foreach($list as $key => &$val){
 			$tmp = $classModel->getClassInfo(['id' => $val['class_id']]);
 			$val['class_name'] = $tmp['name'];

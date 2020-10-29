@@ -5,7 +5,7 @@
  * Time: 14:39
  */
 
-namespace app\hsxz\model;
+namespace app\admin\model;
 
 use think\Model;
 
@@ -17,7 +17,7 @@ class TimeTableModel extends Model
     {
         $res = TimeTableModel::where($where)
             ->field($fields)
-            ->findOrEmpty();
+            ->find();
         return $res;
     }
     public function addTimeTable($params=[], $incId = false)

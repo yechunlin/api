@@ -1,11 +1,16 @@
 <?php
-namespace app\hsxz\controller;
+namespace app\admin\controller;
 
 use app\common\controller\MyController;
 use think\facade\Request;
 
 class Upload extends MyController
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
 	public function execAction()
 	{
 		$file = Request::file('file');

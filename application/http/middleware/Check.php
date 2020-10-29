@@ -7,7 +7,7 @@ use think\facade\Request;
 class Check
 {
 	public function handle($request, \Closure $next)
-    {	
+    {
         return $next($request);
     }
 }

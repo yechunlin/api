@@ -18,7 +18,7 @@ class UserModel extends Model
 	{
         return UserModel::where($where)
 			->field($fields)
-			->findOrEmpty();
+			->find();
 		return $res;
 	}
 

@@ -11,6 +11,7 @@ class ClassServer extends MyController
 	private $class_model;
 	public function __construct()
 	{
+        parent::__construct();
 		$this->class_model = new ClassModel();
 	}
 

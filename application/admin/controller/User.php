@@ -29,12 +29,14 @@ class User extends MyController
 		$where = [
 			'username' => $params['username'],
 			'password' => md5($params['password']),
+            'type'   => 2,//管理员
             'status' => 1
 		];
-		$user = $this->user_model->getUserInfo($where);
+		$user = $this->user_model->getUserInfo($where, 'id');
 		if($user)
-		{	$edcrypt = new Edcrypt();
-			$token = $edcrypt->encrypt($user['id'].'_'.time().'_'.md5($user['id']));
+		{
+		    $edcrypt = new Edcrypt();
+			$token = $edcrypt->encrypt($user['id'].'_'. ( time() + 3600 ).'_'.md5($user['id']));
 			$res = $this->user_model->updateUser(['id' => $user['id']], [
 				'lastdated' => date('Y-m-d H:i:s')
 			]);

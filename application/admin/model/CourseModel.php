@@ -1,5 +1,5 @@
 <?php
-namespace app\hsxz\model;
+namespace app\admin\model;
 
 use think\Model;
 
@@ -12,7 +12,7 @@ class CourseModel extends Model
 	{
 		$res = CourseModel::where($where)
 			->field($fields)
-			->findOrEmpty();
+			->find();
 		return $res;
 	}
 
