@@ -46,7 +46,10 @@ Route::group('admin', function () {
     Route::post('Upload/execActionBlod', 'admin/Upload/execActionBlod');
 });
 
-Route::group('index', function(){
-    Route::get('index', 'index/index/hello');
-    Route::get('showError', 'index/index/showError');
-})->model('\app\hsxz\model\UserModel');
+Route::group('hsxz', function(){
+    Route::get('get_class_info', 'hsxz/ClassServer/getClassInfo');
+    Route::get('get_class', 'hsxz/ClassServer/getClass');
+
+    Route::get('get_course_info', 'hsxz/Course/getCourseInfo');
+    Route::get('get_course', 'hsxz/Course/getCourse');
+});

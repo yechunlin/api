@@ -16,12 +16,11 @@ class ClassModel extends Model
 		return $res;
 	}
 
-	public function getClass($where=[], $page=1, $limit=10, $sort=1)
+	public function getClass($where=[], $page=1, $limit=10, $field='*')
 	{
-	    $order = !intval($sort) ? 'asc' : 'desc';
 		$res = ClassModel::where($where)
-			->field('*')
-			->order('id', $order)
+			->field($field)
+			->order('id', 'desc')
 			->page($page, $limit)
 			->select();
 		return $res;
