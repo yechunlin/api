@@ -14,7 +14,7 @@ class MyController extends Controller
 
 	public function __construct()
 	{
-        //$this->checkToken();
+        $this->checkToken();
 	}
 
 	public function checkToken()

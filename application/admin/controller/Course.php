@@ -46,7 +46,6 @@ class Course extends MyController
             'title' => '',
             'cover' => '',
             'class_id' => 0,
-            'video_id' => 0,
             'teacher_id' => 0,
             'admin_id' => 0
         ], 'post');
@@ -54,7 +53,6 @@ class Course extends MyController
             'title|标题' => 'require|max:30',
             'cover|封面图' => 'require',
             'class_id|班级ID' => 'require|integer',
-            'video_id|视频ID' => 'integer',
             'teacher_id|教师ID' => 'require|integer',
             'admin_id|管理员ID' => 'require|integer'
         ]);
@@ -139,13 +137,12 @@ class Course extends MyController
      */
     public function updateCourse()
     {
-        $params = Request::only(['id', 'title', 'cover', 'class_id', 'video_id', 'teacher_id', 'admin_id'], 'post');
+        $params = Request::only(['id', 'title', 'cover', 'class_id', 'teacher_id', 'admin_id'], 'post');
         $validate   = Validate::make([
             'id|课程id'  => 'require|integer',
             'title|标题' => 'require|max:30',
             'cover|封面图' => 'require',
             'class_id|班级ID' => 'require|integer',
-            'video_id|视频ID' => 'integer',
             'teacher_id|教师ID' => 'require|integer',
             'admin_id|管理员ID' => 'require|integer'
         ]);
@@ -159,7 +156,6 @@ class Course extends MyController
             'title' => $params['title'],
             'cover' => $params['cover'],
 			'class_id' => $params['class_id'],
-			'video_id' => $params['video_id'],
 			'teacher_id' => $params['teacher_id'],
 			'admin_id' => $params['admin_id']
         ];
