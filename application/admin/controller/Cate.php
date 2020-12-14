@@ -3,33 +3,33 @@ namespace app\admin\controller;
 
 use app\common\controller\MyController;
 use think\facade\Request;
-use app\admin\model\CourseModel;
+use app\admin\model\CateModel;
 use think\Validate;
 
-class Course extends MyController
+class Cate extends MyController
 {
-	private $course_model;
+	private $cate_model;
 	public function __construct()
 	{
         parent::__construct();
-		$this->course_model = new CourseModel();
+		$this->cate_model = new CateModel();
 	}
 
     /**
-     * 根据ID获取课程详情
+     * 根据ID获取分类详情
      * @param id int
      * @return \think\response\Json
      */
-	public function getCourseInfo()
+	public function getCateInfo()
 	{
 	    $params = Request::only(['id'], 'get');
         $validate   = Validate::make([
-            'id|课程ID'  => 'require|integer'
+            'id|分类ID'  => 'require|integer'
         ]);
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
-		$res = $this->course_model->getCourseInfo(['id' => $params['id']]);
+		$res = $this->cate_model->getCateInfo(['id' => $params['id']]);
         if($res)
         {
             return $this->_success($res);
@@ -38,30 +38,23 @@ class Course extends MyController
 	}
 
     /**
-     * 添加课程
+     * 添加分类
      */
-	public function addCourse()
+	public function addCate()
 	{
         $params = Request::only([
-            'title' => '',
-            'cover' => '',
-			'video' => '',
-            'class_id' => 0,
-            'teacher_id' => 0,
+            'name' => '',
             'admin_id' => 0
         ], 'post');
         $validate = Validate::make([
-            'title|标题' => 'require|max:30',
-            'cover|封面图' => 'require',
-			'video|视频' => 'require',
-            'class_id|班级ID' => 'require|integer',
-            'teacher_id|教师ID' => 'require|integer',
+            'name|名称' => 'require|max:30',
             'admin_id|管理员ID' => 'require|integer'
         ]);
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
-		$res = $this->course_model->addCourse($params, true);
+		$params['dated'] = date('Y-m-d H:i:s');
+		$res = $this->cate_model->addCate($params, true);
 		if($res)
 		{
 		    $params['id'] = $res;
@@ -71,23 +64,21 @@ class Course extends MyController
 	}
 
     /**
-     * 获取课程列表
+     * 获取分类列表
      */
-    public function getCourse()
+    public function getCate()
     {
         $params = Request::only([
             'id'    => 0,
-            'class_id' => 0,
-            'title' => '',
+            'name' => '',
             'status'=> 1,
             'sort'  => 1,
             'page'  => 1,
             'limit' => 20
         ], 'get');
         $validate   = Validate::make([
-            'id|课程ID' => 'integer',
-            'class_id|班级ID' => 'integer',
-            'title|标题'=> 'max:20',
+            'id|分类ID'=> 'integer',
+            'name|名称'=> 'max:20',
             'status'   => 'integer',
             'sort'     => 'integer',
             'page'     => 'integer',
@@ -100,31 +91,22 @@ class Course extends MyController
         if($params['id'])
         {
             $where['id'] = $params['id'];
-            $count = $this->course_model->getCount($where);
-            $list  = $this->course_model->getCourse($where, $params['page'], $params['limit'], $params['sort']);
+            $count = $this->cate_model->getCount($where);
+            $list  = $this->cate_model->getCate($where, $params['page'], $params['limit'], $params['sort']);
         }else{
-            if($params['class_id']){
-                $where['class_id'] = $params['class_id'];
-            }
-            if($params['title']){
+            if($params['name']){
                 $likeWhere = [
-                    ['field' => 'title', 'value' => $params['title']]
+                    ['field' => 'name', 'value' => $params['name']]
                 ];
-                $count = $this->course_model->getLikeCount($where, $likeWhere);
-                $list  = $this->course_model->getLikeCourse($where, $likeWhere, $params['page'], $params['limit'], $params['sort']);
+                $count = $this->cate_model->getLikeCount($where, $likeWhere);
+                $list  = $this->cate_model->getLikeCate($where, $likeWhere, $params['page'], $params['limit'], $params['sort']);
             }else{
-                $count = $this->course_model->getCount($where);
-                $list  = $this->course_model->getCourse($where, $params['page'], $params['limit'], $params['sort']);
+                $count = $this->cate_model->getCount($where);
+                $list  = $this->cate_model->getCate($where, $params['page'], $params['limit'], $params['sort']);
             }
         }
-
-		$classModel = new \app\admin\model\ClassModel();
 		$userModel = new \app\admin\model\UserModel();
 		foreach($list as $key => &$val){
-			$tmp = $classModel->getClassInfo(['id' => $val['class_id']]);
-			$val['class_name'] = $tmp['name'];
-			$tmp = $userModel->getUserInfo(['id' => $val['teacher_id']]);
-			$val['teacher_name'] = $tmp['username'];
 			$tmp = $userModel->getUserInfo(['id' => $val['admin_id']]);
 			$val['admin_name'] = $tmp['username'];
 		}
@@ -135,18 +117,14 @@ class Course extends MyController
     }
 
     /**
-     * 修改课程信息
+     * 修改分类信息
      */
-    public function updateCourse()
+    public function updateCate()
     {
-        $params = Request::only(['id', 'title', 'cover', 'video', 'class_id', 'teacher_id', 'admin_id'], 'post');
+        $params = Request::only(['id', 'name', 'admin_id'], 'post');
         $validate   = Validate::make([
-            'id|课程id'  => 'require|integer',
-            'title|标题' => 'require|max:30',
-            'cover|封面图' => 'require',
-			'video|视频' => 'require',
-            'class_id|班级ID' => 'require|integer',
-            'teacher_id|教师ID' => 'require|integer',
+            'id|分类id'  => 'require|integer',
+            'name|名称' => 'require|max:30',
             'admin_id|管理员ID' => 'require|integer'
         ]);
         if(!$validate->check($params)) {
@@ -156,14 +134,10 @@ class Course extends MyController
             'id' => $params['id']
         ];
         $data = [
-            'title' => $params['title'],
-            'cover' => $params['cover'],
-			'video' => $params['video'],
-			'class_id' => $params['class_id'],
-			'teacher_id' => $params['teacher_id'],
+            'name' => $params['name'],
 			'admin_id' => $params['admin_id']
         ];
-        $res = $this->course_model->updateCourse($where, $data);
+        $res = $this->cate_model->updateCate($where, $data);
         if($res)
         {
             return $this->_success($params);
@@ -172,13 +146,13 @@ class Course extends MyController
     }
 
     /**
-     * 删除课程信息
+     * 删除分类信息
      */
-    public function deleteCourse()
+    public function deleteCate()
     {
         $params = Request::only(['id'], 'post');
         $validate   = Validate::make([
-            'id|课程ID'  => 'require|integer'
+            'id|分类ID'  => 'require|integer'
         ]);
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
@@ -186,7 +160,7 @@ class Course extends MyController
         $data = [
             'status' => 0,
         ];
-        $res = $this->course_model->updateCourse($params, $data);
+        $res = $this->cate_model->updateCate($params, $data);
         if($res)
         {
             return $this->_success($params);

@@ -12,6 +12,13 @@ Route::miss('output/Output/notFound');
 
 //班级
 Route::group('admin', function () {
+	//分类
+	Route::get('Cate/getCateInfo', 'admin/Cate/getCateInfo');
+    Route::get('Cate/getCate', 'admin/Cate/getCate');
+    Route::post('Cate/addCate', 'admin/Cate/addCate');
+    Route::post('Cate/updateCate', 'admin/Cate/updateCate');
+    Route::post('Cate/deleteCate', 'admin/Cate/deleteCate');
+	//班级
     Route::get('Class/getClassInfo', 'admin/ClassServer/getClassInfo');
     Route::get('Class/getClass', 'admin/ClassServer/getClass');
     Route::post('Class/addClass', 'admin/ClassServer/addClass');
@@ -44,7 +51,7 @@ Route::group('admin', function () {
     //上传
     Route::post('Upload/execAction', 'admin/Upload/execAction');
     Route::post('Upload/execActionBlod', 'admin/Upload/execActionBlod');
-});
+})->allowCrossDomain();
 
 Route::group('hsxz', function(){
     Route::get('get_class_info', 'hsxz/ClassServer/getClassInfo');

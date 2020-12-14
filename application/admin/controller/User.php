@@ -29,7 +29,6 @@ class User extends MyController
 		$where = [
 			'username' => $params['username'],
 			'password' => md5($params['password']),
-            'type'   => 2,//管理员
             'status' => 1
 		];
 		$user = $this->user_model->getUserInfo($where, 'id');

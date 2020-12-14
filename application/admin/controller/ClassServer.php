@@ -44,12 +44,14 @@ class ClassServer extends MyController
 	{
         $params = Request::only([
             'name' => '',
-            'description' => '',
+			'cate_id' => 0,
+			'num' => 0,
             'admin_id' => 0
         ], 'post');
         $validate = Validate::make([
             'name' => 'require|max:20',
-            'description' => 'require|max:50',
+			'cate_id' => 'require|integer',
+			'num'  => 'require|integer',
             'admin_id' => 'require|integer'
         ]);
         if(!$validate->check($params)) {
@@ -60,6 +62,9 @@ class ClassServer extends MyController
         if($res)
         {
             $params['id'] = $res;
+			$cateModel = new \app\admin\model\CateModel();
+			$tmp = $cateModel->getCateInfo(['id' => $params['cate_id']]);
+			$params['cate_name'] = $tmp['name'];
             return $this->_success($params);
         }
         return $this->serviceError();
@@ -73,6 +78,7 @@ class ClassServer extends MyController
         $params = Request::only([
             'id' => 0,
             'name' => '',
+			'cate_id' => 0,
             'status' => 1,
             'sort' => 1,
             'page' => 1,
@@ -81,6 +87,7 @@ class ClassServer extends MyController
         $validate   = Validate::make([
             'id|用户ID'  => 'integer',
             'name|用户名'  => 'max:20',
+			'cate_id|分类' => 'integer',
             'status'  => 'integer',
             'sort'  => 'integer',
             'page'  => 'integer',
@@ -94,6 +101,10 @@ class ClassServer extends MyController
         {
             $where['id'] = $params['id'];
         }
+		if($params['cate_id'])
+        {
+            $where['cate_id'] = $params['cate_id'];
+        }
         if($params['name'])
         {
             $likeWhere = [
@@ -104,6 +115,14 @@ class ClassServer extends MyController
         }else{
 		    $count = $this->class_model->getCount($where);
 			$list  = $this->class_model->getClass($where, $params['page'], $params['limit'], $params['sort']);
+		}
+		$cateModel = new \app\admin\model\CateModel();
+		$userModel = new \app\admin\model\UserModel();
+		foreach($list as $key => &$val){
+			$tmp = $cateModel->getCateInfo(['id' => $val['cate_id']]);
+			$val['cate_name'] = $tmp['name'];
+			$tmp = $userModel->getUserInfo(['id' => $val['admin_id']]);
+			$val['admin_name'] = $tmp['username'];
 		}
         return $this->_success([
             'total' => $count,
@@ -117,11 +136,12 @@ class ClassServer extends MyController
      */
     public function updateClass()
     {
-        $params = Request::only(['id', 'name', 'description'], 'post');
+        $params = Request::only(['id', 'name', 'cate_id', 'num'], 'post');
         $validate   = Validate::make([
             'id|用户ID'  => 'require|integer',
             'name|用户名'  => 'max:20',
-            'description|描述'  => 'max:50'
+			'num|招生'  => 'require|integer',
+			'cate_id|分类' => 'require|integer'
         ]);
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
@@ -131,11 +151,15 @@ class ClassServer extends MyController
         ];
         $data = [
             'name' => $params['name'],
-            'description' => $params['description']
+			'num' => $params['num'],
+			'cate_id' => $params['cate_id']
         ];
         $res = $this->class_model->updateClass($where, $data);
         if($res)
         {
+			$cateModel = new \app\admin\model\CateModel();
+			$tmp = $cateModel->getCateInfo(['id' => $params['cate_id']]);
+			$params['cate_name'] = $tmp['name'];
             return $this->_success($params);
         }
         return $this->serviceError();
