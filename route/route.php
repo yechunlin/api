@@ -43,6 +43,7 @@ Route::group('admin', function () {
     Route::post('Timetable/updateTimeTable', 'admin/TimeTable/updateTimeTable');
     Route::post('Timetable/deleteTimeTable', 'admin/TimeTable/deleteTimeTable');
     //管理员
+	Route::post('user/addUser', 'admin/User/addUser');
     Route::post('user/login', 'admin/User/login');
     Route::get('user/info', 'admin/User/info');
     Route::get('user/getUser', 'admin/User/getUser');

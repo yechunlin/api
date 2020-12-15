@@ -16,6 +16,38 @@ class User extends MyController
 		$this->user_model = new UserModel();
 	}
 
+    /**
+     * 添加用户
+     */
+	public function addUser()
+	{
+        $params = Request::only([
+            'username' => '',
+			'password' => '123456',
+			'phone' => '',
+			'intro' => '',
+            'admin_id' => 0
+        ], 'post');
+        $validate = Validate::make([
+            'username|名称' => 'require|max:30',
+            'admin_id|管理员ID' => 'require|integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
+		$params['avatar'] = 'https://yechunlin.com/upload/20170902181523_vetXi.jpeg';
+		$params['dated'] = date('Y-m-d H:i:s');
+		$params['lastdated'] = $params['dated'];
+		$res = $this->user_model->addUser($params, true);
+		if($res)
+		{
+		    $params['id'] = $res;
+			unset($params['password'] );
+ 			return $this->_success($params);
+		}
+		return $this->serviceError();
+	}
+
 	public function login()
 	{
         $params = Request::only(['username','password'], 'post');
@@ -92,6 +124,7 @@ class User extends MyController
             return $this->validateError($validate->getError());
         }
         $where = ['status' => $params['status']];
+		$field = 'id,username,avatar,phone,intro,lastdated,status';
         if($params['id'])
         {
             $where['id'] = $params['id'];
@@ -102,10 +135,10 @@ class User extends MyController
                 ['field' => 'username', 'value' => $params['username']]
             ];
             $count = $this->user_model->getLikeCount($where, $likeWhere);
-            $list  = $this->user_model->getLikeUser($where, $likeWhere, $params['page'], $params['limit'], $params['sort']);
+            $list  = $this->user_model->getLikeUser($where, $likeWhere, $params['page'], $params['limit'], $params['sort'], $field);
         }else{
             $count = $this->user_model->getCount($where);
-            $list  = $this->user_model->getUser($where, $params['page'], $params['limit'], $params['sort']);
+            $list  = $this->user_model->getUser($where, $params['page'], $params['limit'], $params['sort'], $field);
         }
         return $this->_success([
             'total' => $count,
