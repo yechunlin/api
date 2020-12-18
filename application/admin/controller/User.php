@@ -26,6 +26,10 @@ class User extends MyController
 			'password' => '123456',
 			'phone' => '',
 			'intro' => '',
+			'school' => '',
+			'grade' => '',
+			'local' => '',
+			'type'  => 1,
             'admin_id' => 0
         ], 'post');
         $validate = Validate::make([
@@ -35,7 +39,8 @@ class User extends MyController
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
-		$params['avatar'] = 'https://yechunlin.com/upload/20170902181523_vetXi.jpeg';
+		$params['password'] = md5($params['password']);
+		$params['avatar'] = 'http://yechunlin.com/upload/20170902181523_vetXi.jpeg';
 		$params['dated'] = date('Y-m-d H:i:s');
 		$params['lastdated'] = $params['dated'];
 		$res = $this->user_model->addUser($params, true);
@@ -93,7 +98,7 @@ class User extends MyController
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
-        $user = $this->user_model->getUserInfo(['id' => $params['user_id']], 'username,avatar');
+        $user = $this->user_model->getUserInfo(['id' => $params['user_id']], 'id,username,avatar,phone,intro,school,grade,local,type');
         if($user)
         {
             $user['roles'] = ['admin'];
@@ -107,6 +112,7 @@ class User extends MyController
         $params = Request::only([
             'id'    => 0,
             'username' => '',
+			'type'  => 1,
             'status'=> 1,
             'sort'  => 1,
             'page'  => 1,
@@ -116,6 +122,7 @@ class User extends MyController
             'id|用户ID' => 'integer',
             'username|昵称'=> 'max:20',
             'status'   => 'integer',
+			'type'   => 'integer',
             'sort'     => 'integer',
             'page'     => 'integer',
             'limit'    => 'integer'
@@ -123,8 +130,8 @@ class User extends MyController
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
-        $where = ['status' => $params['status']];
-		$field = 'id,username,avatar,phone,intro,lastdated,status';
+        $where = ['status' => $params['status'], 'type' => $params['type']];
+		$field = 'id,username,avatar,phone,intro,school,grade,local,lastdated,status';
         if($params['id'])
         {
             $where['id'] = $params['id'];
@@ -153,19 +160,42 @@ class User extends MyController
 
     public function updateUser()
     {
-        $params = Request::only(['id', 'username', 'avatar'], 'post');
+		$params = Request::only([
+			'id' => 0,
+            'username' => '',
+			'avatar' => '',
+			'password' => '',
+			'phone' => '',
+			'intro' => '',
+			'school' => '',
+			'grade' => '',
+			'local' => '',
+            'admin_id' => 0
+        ], 'post');
         $validate   = Validate::make([
             'id|用户ID' => 'require|integer',
             'username|昵称'=> 'require|max:20',
-            'avatar|图像'  => 'require',
+            'phone|电话'  => 'require',
+			'avatar|头像'  => 'require',
         ]);
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
         $data = [
             'username' => $params['username'],
-            'avatar' => $params['avatar']
+            'avatar' => $params['avatar'],
+			'phone' => $params['phone'],
+			'intro' => $params['intro'],
+			'school' => $params['school'],
+			'grade' => $params['grade'],
+			'local' => $params['local']
         ];
+		if(!empty($params['password'])){
+			if(!isset($params['password'][5])){
+				return $this->validateError('密码长度要大于等于6');
+			}
+			$data['password'] = md5($params['password']);
+		}
         $res = $this->user_model->updateUser(['id' => $params['id']], $data);
         if($res)
         {
