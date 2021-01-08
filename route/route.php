@@ -49,6 +49,7 @@ Route::group('admin', function () {
     Route::get('user/getUser', 'admin/User/getUser');
     Route::post('user/logout', 'admin/User/logout');
     Route::post('user/updateUser', 'admin/User/updateUser');
+	Route::get('user/getRouter', 'admin/User/getRouter');
     //上传
     Route::post('Upload/execAction', 'admin/Upload/execAction');
     Route::post('Upload/execActionBlod', 'admin/Upload/execActionBlod');

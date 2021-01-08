@@ -203,4 +203,11 @@ class User extends MyController
         }
         return $this->serviceError();
     }
+	
+	//获取用户对于路由
+	public function getRouter()
+	{
+		$header = Request::header();
+		return $this->_success(['id' => 2]);
+	}
 }
