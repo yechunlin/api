@@ -65,6 +65,15 @@ class Course extends MyController
 		if($res)
 		{
 		    $params['id'] = $res;
+			$classModel = new \app\admin\model\ClassModel();
+			$userModel = new \app\admin\model\UserModel();
+			$tmp = $classModel->getClassInfo(['id' => $params['class_id']]);
+			$params['class_name'] = $tmp['name'];
+			$tmp = $userModel->getUserInfo(['id' => $params['teacher_id']]);
+			$params['teacher_name'] = $tmp['username'];
+			$tmp = $userModel->getUserInfo(['id' => $params['admin_id']]);
+			$params['admin_name'] = $tmp['username'];
+			
  			return $this->_success($params);
 		}
 		return $this->serviceError();
@@ -118,10 +127,12 @@ class Course extends MyController
             }
         }
 
+		$cateModel = new \app\admin\model\CateModel();
 		$classModel = new \app\admin\model\ClassModel();
 		$userModel = new \app\admin\model\UserModel();
 		foreach($list as $key => &$val){
 			$tmp = $classModel->getClassInfo(['id' => $val['class_id']]);
+			$val['cate_id'] = $tmp['cate_id'];
 			$val['class_name'] = $tmp['name'];
 			$tmp = $userModel->getUserInfo(['id' => $val['teacher_id']]);
 			$val['teacher_name'] = $tmp['username'];
@@ -166,6 +177,16 @@ class Course extends MyController
         $res = $this->course_model->updateCourse($where, $data);
         if($res)
         {
+			$classModel = new \app\admin\model\ClassModel();
+			$userModel = new \app\admin\model\UserModel();
+			$tmp = $classModel->getClassInfo(['id' => $params['class_id']]);
+			$params['cate_id'] = $tmp['cate_id'];
+			$params['class_name'] = $tmp['name'];
+			$tmp = $userModel->getUserInfo(['id' => $params['teacher_id']]);
+			$params['teacher_name'] = $tmp['username'];
+			$tmp = $userModel->getUserInfo(['id' => $params['admin_id']]);
+			$params['admin_name'] = $tmp['username'];
+
             return $this->_success($params);
         }
         return $this->serviceError();

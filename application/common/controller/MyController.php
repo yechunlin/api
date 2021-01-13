@@ -7,7 +7,7 @@ use think\facade\Request;
 
 class MyController extends Controller
 {
-	private $wirtePath = ['admin/user/login','admin/Upload/execAction','admin/Upload/execActionBlod'];
+	private $wirtePath = ['admin/user/login','admin/user/logout','admin/Upload/execAction','admin/Upload/execActionBlod'];
     protected $header = [
         'Content-Type' => 'application/json; charset=utf-8'
     ];
