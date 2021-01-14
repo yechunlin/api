@@ -25,7 +25,10 @@ class TimeTableModel extends Model
         $res = TimeTableModel::insert($params);
         return $res;
     }
-
+	public function updateTimeTable($where=[], $data=[])
+    {
+        return TimeTableModel::where($where)->update($data);
+    }
     public function getTimeTable($where=[], $page=1, $limit=10, $sort=1)
     {
         $order = !intval($sort) ? 'asc' : 'desc';
