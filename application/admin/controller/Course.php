@@ -1,12 +1,12 @@
 <?php
 namespace app\admin\controller;
 
-use app\common\controller\MyController;
+use app\common\controller\AdminController;
 use think\facade\Request;
 use app\admin\model\CourseModel;
 use think\Validate;
 
-class Course extends MyController
+class Course extends AdminController
 {
 	private $course_model;
 	public function __construct()

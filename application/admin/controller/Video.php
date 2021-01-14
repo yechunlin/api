@@ -1,12 +1,12 @@
 <?php
 namespace app\admin\controller;
 
-use app\common\controller\MyController;
+use app\common\controller\AdminController;
 use think\facade\Request;
 use app\admin\model\VideoModel;
 use think\Validate;
 
-class Video extends MyController
+class Video extends AdminController
 {
 	private $video_model;
 	public function __construct()

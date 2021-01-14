@@ -1,12 +1,12 @@
 <?php
 namespace app\admin\controller;
 
-use app\common\controller\AdminController;
+use app\common\controller\MyController;
 use think\facade\Request;
 use app\admin\model\CateModel;
 use think\Validate;
 
-class Cate extends AdminController
+class Cate extends MyController
 {
 	private $cate_model;
 	public function __construct()

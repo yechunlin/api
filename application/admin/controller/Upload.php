@@ -1,10 +1,10 @@
 <?php
 namespace app\admin\controller;
 
-use app\common\controller\MyController;
+use app\common\controller\AdminController;
 use think\facade\Request;
 
-class Upload extends MyController
+class Upload extends AdminController
 {
     public function __construct()
     {

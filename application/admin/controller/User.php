@@ -1,13 +1,13 @@
 <?php
 namespace app\admin\controller;
 
-use app\common\controller\MyController;
+use app\common\controller\AdminController;
 use think\facade\Request;
 use think\Validate;
 use app\admin\model\UserModel;
 use myextend\Edcrypt;
 
-class User extends MyController
+class User extends AdminController
 {
 	private $user_model;
 	public function __construct()
