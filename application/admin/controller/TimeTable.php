@@ -195,4 +195,29 @@ class TimeTable extends AdminController
         return $this->serviceError();
     }
 
+	/**
+	*	获取用户报名的班级
+	*/
+	public function	getUserClass()
+	{
+        $params = Request::only([
+            'user_id'=> 0
+        ], 'get');
+        $validate   = Validate::make([
+            'user_id|用户ID'=> 'integer'
+        ]);
+        if(!$validate->check($params)) {
+            return $this->validateError($validate->getError());
+        }
+        $list  = $this->time_table_model->getUserClass($params['user_id']);
+
+        $classModel = new \app\admin\model\ClassModel();
+        foreach($list as $key => &$val){
+            $tmp = $classModel->getClassInfo(['id' => $val['class_id']], 'name,cate_id');
+            $val['class_name'] = $tmp['name'];
+        }
+        return $this->_success([
+            'items' => $list
+        ]);
+	}
 }

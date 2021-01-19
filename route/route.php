@@ -42,6 +42,7 @@ Route::group('admin', function () {
     Route::post('Timetable/addTimeTable', 'admin/TimeTable/addTimeTable');
     Route::post('Timetable/updateTimeTable', 'admin/TimeTable/updateTimeTable');
     Route::post('Timetable/deleteTimeTable', 'admin/TimeTable/deleteTimeTable');
+	Route::get('Timetable/getUserClass', 'admin/TimeTable/getUserClass');
     //管理员
 	Route::post('user/addUser', 'admin/User/addUser');
     Route::post('user/login', 'admin/User/login');

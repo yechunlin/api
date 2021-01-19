@@ -44,4 +44,13 @@ class TimeTableModel extends Model
     {
         return TimeTableModel::where($where)->count('id');
     }
+
+	public function getUserClass($user_id = 0)
+	{
+        $res = TimeTableModel::where(['user_id' => $user_id])
+            ->field('class_id')
+			->group('class_id')
+            ->select();
+        return $res;
+	}
 }
