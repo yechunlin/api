@@ -3,7 +3,7 @@ namespace app\admin\controller;
 
 use app\common\controller\MyController;
 use think\facade\Request;
-use app\admin\model\CateModel;
+use app\hsxz\model\CateModel;
 use think\Validate;
 
 class Cate extends MyController
@@ -21,8 +21,8 @@ class Cate extends MyController
     public function getCate()
     {
         $params = Request::only([
-            'page'  => 1,
-            'limit' => 7
+            'page'  => $this->page,
+            'limit' => $this->limit
         ], 'get');
         $validate   = Validate::make([
             'page'     => 'integer',
@@ -32,14 +32,9 @@ class Cate extends MyController
             return $this->validateError($validate->getError());
         }
 
-        $count = $this->cate_model->getCount($where);
+        $count = $this->cate_model->getCount(['state' => 1]);
         $list  = $this->cate_model->getCate($params['page'], $params['limit']);
         
-		$userModel = new \app\admin\model\UserModel();
-		foreach($list as $key => &$val){
-			$tmp = $userModel->getUserInfo(['id' => $val['admin_id']]);
-			$val['admin_name'] = $tmp['username'];
-		}
         return $this->_success([
             'total' => $count,
             'items' => $list

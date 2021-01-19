@@ -15,48 +15,35 @@ class ClassServer extends MyController
 	}
 
     /**
-     * 根据ID获取班级详情
-     * @param id int
-     * @return \think\response\Json
-     */
-	public function getClassInfo()
-	{
-        $params = Request::only(['id'], 'get');
-        $validate   = Validate::make([
-            'id|用户ID'  => 'require|integer'
-        ]);
-        if(!$validate->check($params)) {
-            return $this->validateError($validate->getError());
-        }
-		$res = $this->class_model->getClassInfo(['id' => $params['id']]);
-        if($res)
-        {
-            return $this->_success($res);
-        }
-        return $this->notFoundError();
-	}
-
-
-    /**
      * 获取班级列表
      */
     public function getClass()
     {
         $params = Request::only([
-            'page' => 1,
-            'limit' => 20
+			'cate_id' => 0
+            'page'  => $this->page,
+            'limit' => $this->limit
         ], 'get');
         $validate   = Validate::make([
+			'cate_id'  => 'integer',
             'page'  => 'integer',
             'limit'  => 'integer'
         ]);
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
-        $where = ['status' => 1];
+		$where = [
+			'cate_id' => $params['cate_id'],
+			'status' => 1
+		];
         $count = $this->class_model->getCount($where);
         $list  = $this->class_model->getClass($where, $params['page'], $params['limit'], 'id,name');
 
+		$courseModel = new \app\hsxz\model\CourseModel();
+		foreach($list as $key => &$val){
+			$tmp = $courseModel->getCourse(['class_id' => $val['id'], 'status' => 1], 1, 100);
+			$val['courses'] = $tmp
+		}
         return $this->_success([
             'total' => $count,
             'items' => $list

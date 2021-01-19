@@ -9,7 +9,8 @@ class MyController extends Controller
     protected $header = [
         'Content-Type' => 'application/json; charset=utf-8'
     ];
-
+	public $page = 1;
+	public $limit = 7;
 	public function __construct()
 	{
        
