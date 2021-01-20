@@ -57,7 +57,7 @@ Route::group('admin', function () {
 })->allowCrossDomain();
 
 Route::group('hsxz', function(){
-    Route::get('get_class_info', 'hsxz/ClassServer/getClassInfo');
+    Route::get('Cate/getCate', 'hsxz/Cate/getCate');
     Route::get('get_class', 'hsxz/ClassServer/getClass');
 
     Route::get('get_course_info', 'hsxz/Course/getCourseInfo');

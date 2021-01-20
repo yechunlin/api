@@ -1,5 +1,5 @@
 <?php
-namespace app\admin\controller;
+namespace app\hsxz\controller;
 
 use app\common\controller\MyController;
 use think\facade\Request;
@@ -32,7 +32,7 @@ class Cate extends MyController
             return $this->validateError($validate->getError());
         }
 
-        $count = $this->cate_model->getCount(['state' => 1]);
+        $count = $this->cate_model->getCount(['status' => 1]);
         $list  = $this->cate_model->getCate($params['page'], $params['limit']);
         
         return $this->_success([
