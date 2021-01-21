@@ -12,7 +12,7 @@ class CateModel extends Model
 	public function getCate($page=1, $limit=7)
 	{
 		$res = CateModel::field('id,name')
-			->order('id', 'desc')
+			->order('id', 'asc')
 			->page($page, $limit)
 			->select();
 		return $res;

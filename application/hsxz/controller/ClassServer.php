@@ -20,7 +20,7 @@ class ClassServer extends MyController
     public function getClass()
     {
         $params = Request::only([
-			'cate_id' => 0
+            'cate_id' => 0,
             'page'  => $this->page,
             'limit' => $this->limit
         ], 'get');
@@ -42,7 +42,7 @@ class ClassServer extends MyController
 		$courseModel = new \app\hsxz\model\CourseModel();
 		foreach($list as $key => &$val){
 			$tmp = $courseModel->getCourse(['class_id' => $val['id'], 'status' => 1], 1, 100);
-			$val['courses'] = $tmp
+			$val['courses'] = $tmp;
 		}
         return $this->_success([
             'total' => $count,

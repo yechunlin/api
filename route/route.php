@@ -58,7 +58,7 @@ Route::group('admin', function () {
 
 Route::group('hsxz', function(){
     Route::get('Cate/getCate', 'hsxz/Cate/getCate');
-    Route::get('get_class', 'hsxz/ClassServer/getClass');
+    Route::get('Class/getClass', 'hsxz/ClassServer/getClass');
 
     Route::get('get_course_info', 'hsxz/Course/getCourseInfo');
     Route::get('get_course', 'hsxz/Course/getCourse');
