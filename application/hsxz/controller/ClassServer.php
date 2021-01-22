@@ -39,9 +39,14 @@ class ClassServer extends MyController
         $count = $this->class_model->getCount($where);
         $list  = $this->class_model->getClass($where, $params['page'], $params['limit'], 'id,name');
 
-		$courseModel = new \app\hsxz\model\CourseModel();
+        $courseModel = new \app\hsxz\model\CourseModel();
+        $userModel = new \app\hsxz\model\UserModel();
 		foreach($list as $key => &$val){
-			$tmp = $courseModel->getCourse(['class_id' => $val['id'], 'status' => 1], 1, 100);
+            $tmp = $courseModel->getCourse(['class_id' => $val['id'], 'status' => 1], 1, 100);
+            foreach($tmp as $k => &$v){
+                $tmp_class = $userModel->getUserInfo(['id' => $v['admin_id']],'username');
+                $v['admin_name'] = $tmp_class['username'];
+            }
 			$val['courses'] = $tmp;
 		}
         return $this->_success([
