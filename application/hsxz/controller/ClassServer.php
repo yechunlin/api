@@ -32,6 +32,7 @@ class ClassServer extends MyController
         if(!$validate->check($params)) {
             return $this->validateError($validate->getError());
         }
+		$level = ['初级','中级','高级'];
 		$where = [
 			'cate_id' => $params['cate_id'],
 			'status' => 1
@@ -46,6 +47,7 @@ class ClassServer extends MyController
             foreach($tmp as $k => &$v){
                 $tmp_class = $userModel->getUserInfo(['id' => $v['admin_id']],'username');
                 $v['admin_name'] = $tmp_class['username'];
+				$v['level_name'] = $level[$v['level'] + 1];
             }
 			$val['courses'] = $tmp;
 		}
