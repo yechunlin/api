@@ -40,5 +40,4 @@ class Cate extends MyController
             'items' => $list
         ]);
     }
-
 }
