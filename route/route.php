@@ -54,7 +54,8 @@ Route::group('admin', function () {
     //上传
     Route::post('Upload/execAction', 'admin/Upload/execAction');
     Route::post('Upload/execActionBlod', 'admin/Upload/execActionBlod');
-})->header('Access-Control-Allow-Headers','Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-Requested-With, x-token, x-user-id')->allowCrossDomain();
+})
+//->header('Access-Control-Allow-Headers','Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-Requested-With, x-token, x-user-id')->allowCrossDomain();
 
 Route::group('hsxz', function(){
     Route::get('Cate/getCate', 'hsxz/Cate/getCate');
