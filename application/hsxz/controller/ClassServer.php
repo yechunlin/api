@@ -45,9 +45,9 @@ class ClassServer extends MyController
 		foreach($list as $key => &$val){
             $tmp = $courseModel->getCourse(['class_id' => $val['id'], 'status' => 1], 1, 100);
             foreach($tmp as $k => &$v){
-                $tmp_class = $userModel->getUserInfo(['id' => $v['admin_id']],'username');
-                $v['admin_name'] = $tmp_class['username'];
-				$v['level_name'] = $level[$v['level'] + 1];
+                $tmp_class = $userModel->getUserInfo(['id' => $v['teacher_id']],'username');
+                $v['teacher_name'] = $tmp_class['username'];
+				$v['level_name'] = $level[$v['level'] - 1];
             }
 			$val['courses'] = $tmp;
 		}

@@ -9,6 +9,7 @@ use think\Validate;
 class Course extends AdminController
 {
 	private $course_model;
+	private $level = ['初级','中级','高级'];
 	public function __construct()
 	{
         parent::__construct();
@@ -48,7 +49,9 @@ class Course extends AdminController
 			'video' => '',
             'class_id' => 0,
             'teacher_id' => 0,
-            'admin_id' => 0
+            'admin_id' => 0,
+            'recom' => 1,
+            'level' => 1
         ], 'post');
         $validate = Validate::make([
             'title|标题' => 'require|max:30',
@@ -73,6 +76,7 @@ class Course extends AdminController
 			$params['teacher_name'] = $tmp['username'];
 			$tmp = $userModel->getUserInfo(['id' => $params['admin_id']]);
 			$params['admin_name'] = $tmp['username'];
+            $params['level_name'] = $this->level[$params['level'] - 1];
 			
  			return $this->_success($params);
 		}
@@ -138,6 +142,7 @@ class Course extends AdminController
 			$val['teacher_name'] = $tmp['username'];
 			$tmp = $userModel->getUserInfo(['id' => $val['admin_id']]);
 			$val['admin_name'] = $tmp['username'];
+            $val['level_name'] = $this->level[$val['level'] - 1];
 		}
         return $this->_success([
             'total' => $count,
@@ -150,7 +155,7 @@ class Course extends AdminController
      */
     public function updateCourse()
     {
-        $params = Request::only(['id', 'title', 'cover', 'video', 'class_id', 'teacher_id', 'admin_id'], 'post');
+        $params = Request::only(['id', 'title', 'cover', 'video', 'class_id', 'teacher_id', 'recom', 'level', 'admin_id'], 'post');
         $validate   = Validate::make([
             'id|课程id'  => 'require|integer',
             'title|标题' => 'require|max:30',
@@ -172,7 +177,9 @@ class Course extends AdminController
 			'video' => $params['video'],
 			'class_id' => $params['class_id'],
 			'teacher_id' => $params['teacher_id'],
-			'admin_id' => $params['admin_id']
+			'admin_id' => $params['admin_id'],
+            'recom' => $params['recom'],
+            'level' => $params['level']
         ];
         $res = $this->course_model->updateCourse($where, $data);
         if($res)
@@ -186,6 +193,7 @@ class Course extends AdminController
 			$params['teacher_name'] = $tmp['username'];
 			$tmp = $userModel->getUserInfo(['id' => $params['admin_id']]);
 			$params['admin_name'] = $tmp['username'];
+            $params['level_name'] = $this->level[$params['level'] - 1];
 
             return $this->_success($params);
         }
