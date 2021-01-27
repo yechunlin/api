@@ -43,7 +43,7 @@ class ClassServer extends MyController
         $courseModel = new \app\hsxz\model\CourseModel();
         $userModel = new \app\hsxz\model\UserModel();
 		foreach($list as $key => &$val){
-            $tmp = $courseModel->getCourse(['class_id' => $val['id'], 'status' => 1], 1, 100);
+            $tmp = $courseModel->getCourse(['class_id' => $val['id'], 'status' => 1], 1, 100, 0);
             foreach($tmp as $k => &$v){
                 $tmp_class = $userModel->getUserInfo(['id' => $v['teacher_id']],'username');
                 $v['teacher_name'] = $tmp_class['username'];

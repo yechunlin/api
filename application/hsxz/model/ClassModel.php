@@ -12,7 +12,7 @@ class ClassModel extends Model
 	{
 		$res = ClassModel::where($where)
 			->field($field)
-			->order('id', 'desc')
+			//->order('id', 'desc')
 			->page($page, $limit)
 			->select();
 		return $res;
