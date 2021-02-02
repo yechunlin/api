@@ -62,5 +62,6 @@ Route::group('hsxz', function(){
     Route::get('Class/getClass', 'hsxz/ClassServer/getClass');
 
     Route::get('Course/getCourseInfo', 'hsxz/Course/getCourseInfo');
+    Route::get('Course/getCourseVideo', 'hsxz/Course/getVideo');
     Route::get('get_course', 'hsxz/Course/getCourse');
 });
