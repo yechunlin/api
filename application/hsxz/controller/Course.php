@@ -139,7 +139,7 @@ class Course extends MyController
         header("Content-Range: bytes {$start}-{$end}/{$size}");
         header("Content-Length: $length");
         
-        $buffer = 8096;
+        $buffer = 1024*1024;
         $file = fopen($localfile, 'rb');
         if($file){
             fseek($file, $start);
