@@ -93,7 +93,7 @@ class Course extends MyController
         {
             return $this->notFoundError();
         }
-        $localfile = str_replace('C:\phpstudy_pro\WWW\\', '..', $res['video']);
+        $localfile = str_replace('..', 'C:\phpstudy_pro\WWW\\', $res['video']);
         $size = filesize($localfile);
 
         $start = 0;
